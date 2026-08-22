@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter-tight)", "sans-serif"],
+      },
       colors: {
         white: "var(--color-white)",
         blue: "var(--color-blue)",

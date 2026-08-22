@@ -121,11 +121,6 @@ export default function Navbar() {
 
           {/* Right Action Icons & Controls */}
           <div className="flex items-center gap-3.5 sm:gap-6 text-navy">
-            {/* Currency Selector */}
-            <div className="hidden sm:flex items-center gap-1 cursor-pointer hover:text-[#FF5A00] transition-colors text-xs sm:text-sm font-semibold">
-              <span>USD</span>
-              <ChevronDown className="w-3.5 h-3.5" />
-            </div>
 
             {/* Search Icon */}
             <button 

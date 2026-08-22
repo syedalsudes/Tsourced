@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..900;1,300..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Force Inter Tight globally */
+* {
+  font-family: 'Inter Tight', sans-serif !important;
+}
+
+body {
+  font-family: 'Inter Tight', sans-serif;
+  letter-spacing: -0.02em; /* Inter tight ka signature look */
+}
 
 :root {
   --color-white: #f8f9fa;

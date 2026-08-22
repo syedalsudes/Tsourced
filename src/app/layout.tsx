@@ -1,26 +1,14 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
-import { Syne, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 
-const syne = Syne({
+const interTight = Inter_Tight({
   subsets: ["latin"],
-  weight: ["700", "800"],
-  variable: "--font-heading",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-body",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  style: ["italic"],
-  weight: ["600", "700"],
-  variable: "--font-accent",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter-tight",
 });
 
 export const metadata: Metadata = {
@@ -34,10 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${jakarta.variable} ${playfair.variable}`}
-    >
+    <html lang="en" className={interTight.variable}>
       <body className="font-sans antialiased bg-[#fdfdfd] text-navy selection:bg-orange selection:text-white">
         <Navbar />
         {children}
