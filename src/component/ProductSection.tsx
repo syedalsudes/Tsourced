@@ -1,217 +1,185 @@
-// src/components/ProductCatalog.tsx
-"use client";
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, Check } from 'lucide-react';
 
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-
-interface Product {
-  id: number;
-  title: string;
-  category: string;
-  gsm: string;
-  price: string;
-  description: string;
-  images: string[];
-}
-
-const products: Product[] = [
+const businessSolutions = [
   {
-    id: 1,
-    title: "Heavyweight Boxy Pullover Hoodie",
-    category: "Fleece & Outerwear",
-    gsm: "420 GSM French Terry",
-    price: "1400 PKR",
-    description:
-      "100% combed cotton, double-layered hood with drop shoulder silhouette and pre-shrunk finish.",
-    images: [
-      "/products/pro1img1.png",
-      "/products/pro1img2.png",
-      "/products/pro1img3.png",
-      "/products/pro1img4.png",
-      "/products/pro1img5.png",
-      "/products/pro1img6.png",
-      "/products/pro1img7.png",
-    ],
+    title: 'SCREEN PRINTING SHOPS',
+    description: 'Go beyond stock blanks with custom-weight fleece, colors, fits and constructions.',
+    image: '/screenprint.png',
   },
   {
-    id: 2,
-    title: "Vintage Oversized Streetwear Tee",
-    category: "T-Shirts",
-    gsm: "260 GSM Heavy Cotton",
-    price: "1200 PKR",
-    description:
-      "Thick 1.25-inch collar ribbing, twin-needle stitching, enzyme-washed for ultra-soft handfeel.",
-    images: [
-      "/products/pro1img1.png",
-      "/products/pro1img2.png",
-      "/products/pro1img3.png",
-      "/products/pro1img4.png",
-      "/products/pro1img5.png",
-      "/products/pro1img6.png",
-      "/products/pro1img7.png",
-    ],
+    title: 'EMBROIDERY & DECORATION SHOPS',
+    description: 'Offer your customers garments developed around their decoration requirements.',
+    image: '/embmachine.png',
   },
   {
-    id: 3,
-    title: "Full-Zip Relaxed Track Jacket",
-    category: "Zip Hoodies",
-    gsm: "380 GSM Brushed Fleece",
-    price: "1500 PKR",
-    description:
-      "Custom YKK metallic two-way zipper, deep hidden side pockets, and reinforced wrist cuffs.",
-    images: [
-      "/products/pro1img1.png",
-      "/products/pro1img2.png",
-      "/products/pro1img3.png",
-      "/products/pro1img4.png",
-      "/products/pro1img5.png",
-      "/products/pro1img6.png",
-      "/products/pro1img7.png",
-    ],
+    title: 'MERCH & PROMOTIONAL BUSINESSES',
+    description: 'Create custom apparel programs instead of relying entirely on distributor catalogs.',
+    image: '/foldhoodies.png',
+  },
+  {
+    title: 'APPAREL BRANDS & RETAILERS',
+    description: 'Develop your own garments, fabrics, fits, branding and packaging.',
+    image: '/hangshirts.png',
   },
 ];
 
-function SingleProductCard({ product }: { product: Product }) {
-  const [currentIdx, setCurrentIdx] = useState(0);
+const coreProducts = [
+  {
+    title: 'HEAVYWEIGHT HOODIES',
+    subtitle: '380-450 GSM',
+    features: ['Pullover / Zip', 'Custom Fit', 'Custom Colors', 'Private Label'],
+    image: '/shirt.png',
+    href: '/hoodies',
+  },
+  {
+    title: 'CREWNECK SWEATSHIRTS',
+    subtitle: 'Cotton / Poly Fleece',
+    features: ['Brushed Fleece', 'Custom GSM', 'Custom Construction', 'Tear-away Tags'],
+    image: '/shirt.png',
+    href: '/crewneck',
+  },
+  {
+    title: 'SWEATPANTS & JOGGERS',
+    subtitle: 'Matching Sets',
+    features: ['Custom Fit', 'Custom Trims', 'Custom GSM', 'Zipper Pockets'],
+    image: '/shirt.png',
+    href: '/bottoms',
+  },
+  {
+    title: 'PREMIUM T-SHIRTS',
+    subtitle: 'Single Jersey',
+    features: ['Oversized / Regular', 'Custom GSM', 'Custom Colors', 'Preshrunk Fabric'],
+    image: '/shirt.png',
+    href: '/t-shirts',
+  },
+];
 
-  const prevImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setCurrentIdx((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
-  };
-
-  const nextImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setCurrentIdx((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
-  };
-
+export default function SolutionsAndProductsSection() {
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden border border-navy/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(255,90,0,0.12)] hover:border-orange/40 transition-all duration-300 flex flex-col justify-between">
-      
-      {/* PRODUCT IMAGE SLIDER CONTAINER */}
-      <div className="relative w-full aspect-[3/4] bg-[#f2f4f7] overflow-hidden">
+    <section className="w-full bg-[#f8f9fa] py-20 lg:py-28">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-24">
         
-        {/* Active Product Image */}
-        <Image
-          src={product.images[currentIdx]}
-          alt={`${product.title} view ${currentIdx + 1}`}
-          fill
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-        />
-
-
-        {/* Previous Image Arrow (High Visibility White Circle + Orange Hover) */}
-        <button
-          onClick={prevImage}
-          aria-label="Previous photo"
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white text-navy hover:bg-orange hover:text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20 border border-black/5"
-        >
-          <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
-        </button>
-
-        {/* Next Image Arrow (High Visibility White Circle + Orange Hover) */}
-        <button
-          onClick={nextImage}
-          aria-label="Next photo"
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white text-navy hover:bg-orange hover:text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20 border border-black/5"
-        >
-          <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-        </button>
-
-        {/* Bottom Slide Dots */}
-        <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1 z-10">
-          {product.images.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentIdx(i);
-              }}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                i === currentIdx ? "w-4 bg-orange" : "w-1 bg-black/25 hover:bg-black/50"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* CARD CONTENT */}
-      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-        <div className="space-y-1.5">
-          <span className="text-[10px] font-black text-orange uppercase tracking-widest block">
-            {product.category}
-          </span>
-          <h3 className="text-base sm:text-lg font-black text-navy leading-snug group-hover:text-orange transition-colors line-clamp-1">
-            {product.title}
-          </h3>
-          <p className="text-navy/70 text-xs sm:text-[13px] leading-relaxed line-clamp-2 font-normal">
-            {product.description}
-          </p>
-        </div>
-
-        {/* Pricing & CTA */}
-        <div className="pt-3 border-t border-navy/5 flex items-center justify-between">
-          <div>
-            <span className="text-[9px] text-navy/40 font-bold uppercase tracking-wider block">
-              STARTING AT
+        {/* ================= 1. BUSINESS SOLUTIONS (4 Cards) ================= */}
+        <div>
+          {/* Main Heading Center */}
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="text-[#FF5A00] text-xs font-bold uppercase tracking-[0.2em] mb-2 block">
+              Tailored Manufacturing
             </span>
-            <span className="text-base font-black text-navy">
-              {product.price}
-            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.6rem] font-black text-[#092834] tracking-tight leading-tight">
+              Built for Businesses That Sell Custom Apparel
+            </h2>
           </div>
 
-          <Link
-            href="#contact"
-            className="inline-flex items-center gap-1.5 bg-orange hover:bg-[#e04f00] text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm transition-all transform hover:-translate-y-0.5"
-          >
-            <span>Get A Quote</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {/* 4 Cards Grid with Increased Height */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {businessSolutions.map((item, index) => (
+              <div
+                key={index}
+                className="group flex flex-col bg-white rounded-xl border border-gray-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#FF5A00]/40 transition-all duration-300"
+              >
+                {/* Image Container - Height Barha Di Hai (h-64 sm:h-72) */}
+                <div className="relative w-full h-64 sm:h-72 bg-[#092834]/5 overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+
+                {/* Card Content */}
+                <div className="p-6 flex flex-col flex-grow justify-between bg-white">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#092834] uppercase tracking-wider mb-2.5 group-hover:text-[#FF5A00] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 text-xs sm:text-[13px] leading-relaxed font-normal">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-    </div>
-  );
-}
+        {/* ================= 2. CORE PRODUCTS (4 Cards) ================= */}
+        <div>
+          {/* Header Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-14 pb-4 border-b border-gray-200">
+            <div className="text-center sm:text-left">
+              <span className="text-[#FF5A00] text-xs font-bold uppercase tracking-[0.2em] mb-1 block">
+                Catalog Essentials
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black text-[#092834] tracking-tight">
+                Our Core Products
+              </h2>
+            </div>
 
-export default function ProductCatalog() {
-  return (
-    <section id="catalog" className="relative w-full bg-[#f8f9fa] border-y border-navy/10 overflow-hidden py-16 sm:py-20 lg:py-24">
-      
-      {/* Background Canvas Texture & Ambient Glows */}
-      <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
-      <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-80 h-80 bg-orange/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute right-10 top-10 w-72 h-72 bg-orange/5 rounded-full blur-2xl pointer-events-none" />
-
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
-        
-        {/* NEW STREAMLINED SECTION HEADER */}
-        <div className="text-center max-w-2xl mx-auto space-y-1 mb-14 sm:mb-16">
-          <div className="inline-flex items-center justify-center gap-2 mb-1">
-            <span className="w-6 h-[2px] bg-orange rounded-full" />
-            <span className="text-[11px] sm:text-xs font-black tracking-[0.25em] text-orange uppercase">
-              FEATURED ESSENTIALS
-            </span>
-            <span className="w-6 h-[2px] bg-orange rounded-full" />
+            <Link
+              href="/catalog"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#092834] hover:text-[#FF5A00] transition-colors group"
+            >
+              <span>View All Products</span>
+              <ArrowRight className="w-4 h-4 text-[#FF5A00] group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-navy uppercase scale-y-105 leading-none">
-            OUR <span className="text-orange">PRODUCTS</span>
-          </h2>
-        </div>
+          {/* 4 Cards Grid with Increased Height & Feature List */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {coreProducts.map((product, index) => (
+              <div
+                key={index}
+                className="group flex flex-col bg-white rounded-xl border border-gray-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#004e72]/40 transition-all duration-300"
+              >
+                {/* Product Image Container - Height Barha Di Hai (h-64 sm:h-72) */}
+                <div className="relative w-full h-64 sm:h-72 bg-[#f1f3f5] overflow-hidden flex items-center justify-center">
+                  <Image
+                    src={product.image}
+                    alt={product.title}
+                    fill
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-3 right-3 bg-[#092834]/80 backdrop-blur-sm text-white text-[10px] font-semibold px-2.5 py-1 rounded-md">
+                    {product.subtitle}
+                  </div>
+                </div>
 
-        {/* 3-COLUMN PRODUCT CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {products.map((product) => (
-            <SingleProductCard key={product.id} product={product} />
-          ))}
+                {/* Product Specs Content */}
+                <div className="p-6 flex flex-col flex-grow justify-between bg-white border-t border-gray-100">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#092834] uppercase tracking-wider mb-4 group-hover:text-[#004e72] transition-colors">
+                      {product.title}
+                    </h3>
+                    
+                    <ul className="space-y-2 mb-6">
+                      {product.features.map((feat, fIndex) => (
+                        <li key={fIndex} className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                          <Check className="w-3.5 h-3.5 text-[#FF5A00] flex-shrink-0" strokeWidth={2.5} />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Link
+                    href={product.href}
+                    className="w-full text-center py-2.5 px-4 rounded-lg bg-[#092834]/5 text-[#092834] group-hover:bg-[#FF5A00] group-hover:text-white text-xs font-bold uppercase tracking-wider transition-all duration-200"
+                  >
+                    Explore Specs
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>
-
-      {/* Bottom Orange Accent Strip */}
-      <div className="w-full h-1.5 bg-orange absolute bottom-0 left-0" />
     </section>
   );
 }

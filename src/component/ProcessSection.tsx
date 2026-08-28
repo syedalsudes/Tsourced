@@ -1,136 +1,105 @@
-// src/components/ProcessSection.tsx
-import React from "react";
+import React from 'react';
 import { 
-  Lightbulb, 
-  FileSpreadsheet, 
+  FileText, 
+  FlaskConical, 
   CheckCircle2, 
   Factory, 
   Truck, 
-  ArrowRight, 
-  ChevronRight
-} from "lucide-react";
+  ArrowRight 
+} from 'lucide-react';
 
-interface ProcessStep {
-  step: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-const steps: ProcessStep[] = [
+const steps = [
   {
-    step: "01",
-    title: "Share Your Idea",
-    description: "Tell us what you need. We listen and understand your goals.",
-    icon: <Lightbulb className="w-5 h-5" />,
+    step: '01',
+    title: 'SHARE YOUR REQUIREMENTS',
+    desc: 'Send your tech pack, reference garment, sketch or simply tell us what you\'re looking for.',
+    icon: FileText,
   },
   {
-    step: "02",
-    title: "Develop & Quote",
-    description: "We provide options, materials and pricing with full transparency.",
-    icon: <FileSpreadsheet className="w-5 h-5" />,
+    step: '02',
+    title: 'DEVELOP & SAMPLE',
+    desc: 'We develop the fabric, construction and sample based on your requirements.',
+    icon: FlaskConical,
   },
   {
-    step: "03",
-    title: "Sample & Approve",
-    description: "We create samples. You review, test and approve.",
-    icon: <CheckCircle2 className="w-5 h-5" />,
+    step: '03',
+    title: 'APPROVE',
+    desc: 'You review the sample. We finalize every detail before bulk production.',
+    icon: CheckCircle2,
   },
   {
-    step: "04",
-    title: "Production",
-    description: "We manufacture with strict quality control at every step.",
-    icon: <Factory className="w-5 h-5" />,
+    step: '04',
+    title: 'PRODUCTION',
+    desc: 'Cutting, sewing, decoration, finishing and strict quality control at every stage.',
+    icon: Factory,
   },
   {
-    step: "05",
-    title: "Delivery",
-    description: "On-time delivery to your door. Ready for your business.",
-    icon: <Truck className="w-5 h-5" />,
+    step: '05',
+    title: 'SHIP TO YOU',
+    desc: 'Packed and shipped to your business anywhere in the United States.',
+    icon: Truck,
   },
 ];
 
-export default function ProcessSection() {
+export default function HowItWorksSection() {
   return (
-    <section className="relative w-full bg-[#fcfcfc] py-20 sm:py-28 border-t border-navy/5 overflow-hidden">
-      
-      {/* Background Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-orange/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl 2xl:max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
+    <section className="w-full bg-[#f8f9fa] py-16 lg:py-24 border-b border-gray-200">
+      <div className="max-w-[1240px] mx-auto px-6">
         
-        {/* SECTION HEADER */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16 sm:mb-24">
-          
-          {/* Eyebrow Accent */}
-          <div className="inline-flex items-center justify-center gap-3">
-            <span className="w-8 h-[2px] bg-orange rounded-full" />
-            <span className="text-[11px] sm:text-xs font-black tracking-[0.28em] text-orange uppercase">
-              OUR PROCESS
-            </span>
-            <span className="w-8 h-[2px] bg-orange rounded-full" />
-          </div>
-
-          {/* Heavy Bold Orange Serif Heading */}
-          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-navy uppercase scale-y-105 drop-shadow-sm">
-            A SIMPLE <span className="text-orange">PROCESS</span>
+        {/* Main Heading (Orange with Navy Subtitle) */}
+        <div className="text-center mb-16 lg:mb-20">
+          <span className="text-[#004e72] text-xs font-bold uppercase tracking-[0.25em] mb-2 block">
+            Seamless Workflow
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.6rem] font-black text-[#FF5A00] tracking-tight">
+            How It Works
           </h2>
-
-          {/* Subtitle */}
-          <p className="text-navy/70 text-base sm:text-lg leading-relaxed max-w-xl mx-auto font-medium">
-            From booking a call to final delivery — we make custom garment production easy, fast, and hassle-free.
-          </p>
         </div>
 
-        {/* 5-STEP BOXED GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4 relative items-stretch">
-          {steps.map((item, index) => (
-            <div key={index} className="relative flex flex-col">
-              
-              {/* INDIVIDUAL STEP CARD */}
-              <div className="h-full flex flex-col justify-between bg-white rounded-2xl p-6 sm:p-7 border border-navy/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(255,90,0,0.12)] hover:border-orange/40 hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden group">
+        {/* Tight Centered 5-Step Process */}
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-2">
+          {steps.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <React.Fragment key={index}>
                 
-                {/* Large Background Watermark Number */}
-                <span className="absolute -top-3 -right-2 text-6xl  font-black text-navy/[0.04] group-hover:text-orange/10 transition-colors pointer-events-none select-none">
-                  {item.step}
-                </span>
-
-                {/* Card Top: Icon & Step Badge */}
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-orange/10 border border-orange/20 text-orange flex items-center justify-center group-hover:bg-orange group-hover:text-white transition-all duration-300 shadow-sm">
-                      {item.icon}
-                    </div>
-                    <span className="text-[11px] font-black tracking-widest text-navy/40 group-hover:text-orange transition-colors uppercase bg-navy/5 group-hover:bg-orange/10 px-2.5 py-1 rounded-full">
-                      STEP {item.step}
-                    </span>
+                {/* Single Step Container */}
+                <div className="flex items-start gap-3.5 w-full lg:w-[195px] flex-shrink-0 group">
+                  
+                  {/* Left Circle Icon (Navy/Blue subtle container) */}
+                  <div className="w-11 h-11 rounded-full bg-[#004e72]/10 flex items-center justify-center flex-shrink-0 mt-0.5 border border-[#004e72]/15 group-hover:bg-[#FF5A00]/10 group-hover:border-[#FF5A00]/30 transition-all duration-300">
+                    <IconComponent 
+                      className="w-5 h-5 text-[#092834] group-hover:text-[#FF5A00] transition-colors" 
+                      strokeWidth={1.75} 
+                    />
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-lg font-black text-navy tracking-tight leading-snug group-hover:text-orange transition-colors mb-2.5">
-                    {item.title}
-                  </h3>
+                  {/* Right Content */}
+                  <div className="flex flex-col text-left">
+                    <div className="text-[11px] font-black uppercase tracking-wider leading-tight mb-1.5 text-[#092834]">
+                      {/* Orange Step Number */}
+                      <span className="text-[#FF5A00] font-extrabold mr-1">{item.step}</span>
+                      <span>{item.title}</span>
+                    </div>
 
-                  {/* Description */}
-                  <p className="text-navy/70 text-xs sm:text-[13px] leading-relaxed font-normal">
-                    {item.description}
-                  </p>
+                    <p className="text-[#092834]/70 text-[11px] leading-[1.45] font-medium">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Bottom Active Accent Line */}
-                <div className="w-full h-1 bg-navy/5 group-hover:bg-orange transition-colors mt-6 rounded-full" />
-              </div>
+                {/* Inline Small Arrow */}
+                {index !== steps.length - 1 && (
+                  <div className="hidden lg:flex items-center justify-center pt-3.5 flex-shrink-0">
+                    <ArrowRight className="w-3.5 h-3.5 text-[#FF5A00]/60" strokeWidth={2} />
+                  </div>
+                )}
 
-              {/* FLOATING ARROW CONNECTOR (DESKTOP) */}
-              {index !== steps.length - 1 && (
-                <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-navy/15 shadow-sm text-navy/40 items-center justify-center pointer-events-none">
-                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-                </div>
-              )}
-
-            </div>
-          ))}
+              </React.Fragment>
+            );
+          })}
         </div>
+
       </div>
     </section>
   );

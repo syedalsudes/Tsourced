@@ -21,6 +21,14 @@ body {
   --color-orange: #FF5A00;
 }
 
+/* 
+colors: {
+        white: "var(--color-white)",
+        blue: "var(--color-blue)",
+        navy: "var(--color-navy)",
+        orange: "var(--color-orange)",
+      }, */
+
 body {
   color: var(--color-navy);
   background-color: var(--color-white);
