@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   CheckCircle2, 
   Scissors, 
@@ -17,15 +17,58 @@ import {
   Box
 } from 'lucide-react';
 
+// --- TYPESCRIPT INTERFACES ---
+interface Product {
+  id: string;
+  name: string;
+  img: string;
+  defaultFabric: string;
+}
+
+interface ColorOption {
+  name: string;
+  hex: string;
+}
+
+interface AddOnItem {
+  id: string;
+  name: string;
+  cost?: string;
+}
+
+interface FabricState {
+  type: string;
+  gsm: string;
+  finish: string;
+}
+
+interface SelectionState {
+  product: Product;
+  fabric: FabricState;
+  fit: string;
+  color: ColorOption | null;
+  decorations: AddOnItem[];
+  branding: AddOnItem[];
+  customPantone: string;
+}
+
+interface CustomerDetails {
+  name: string;
+  email: string;
+  company: string;
+  phone: string;
+  notes: string;
+}
+
 // --- MASTER DATA CONFIGURATION ---
-const PRODUCTS = [
+const PRODUCTS: Product[] = [
   { id: 'hoodie', name: 'Heavyweight Hoodie', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Fleece' },
   { id: 'crewneck', name: 'Crewneck Sweatshirt', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80', defaultFabric: 'French Terry' },
   { id: 'joggers', name: 'Premium Joggers', img: 'https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Fleece' },
   { id: 'tshirt', name: 'Oversized T-Shirt', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Single Jersey' }
 ];
 
-const FABRIC_DATA = {
+const FABRIC_DATA: { types: string[]; gsm: Record<string, string[]>; finishes: string[] } = {
   types: ['Fleece', 'French Terry', 'Single Jersey', 'Rib'],
   gsm: {
     'Fleece': ['280 GSM', '320 GSM', '350 GSM', '400+ GSM'],
@@ -43,7 +86,7 @@ const FIT_OPTIONS = [
   { id: 'custom', name: 'Custom Pattern', desc: 'Upload your own tech pack.' }
 ];
 
-const PRODUCT_COLORS = {
+const PRODUCT_COLORS: Record<string, ColorOption[]> = {
   'hoodie': [
     { name: 'Onyx Black', hex: '#111111' }, { name: 'Heather Grey', hex: '#9CA3AF' }, 
     { name: 'Dusty Taupe', hex: '#8B7355' }, { name: 'Midnight Navy', hex: '#092834' },
@@ -63,7 +106,7 @@ const PRODUCT_COLORS = {
   ]
 };
 
-const DECORATION_METHODS = [
+const DECORATION_METHODS: AddOnItem[] = [
   { id: 'screen-print', name: 'Screen Printing', cost: 'Standard' },
   { id: 'embroidery', name: 'Embroidery', cost: 'Premium' },
   { id: 'puff-print', name: 'Puff Printing', cost: 'Premium' },
@@ -71,7 +114,7 @@ const DECORATION_METHODS = [
   { id: 'dtg', name: 'DTG Print', cost: 'Standard' }
 ];
 
-const BRANDING_OPTIONS = [
+const BRANDING_OPTIONS: AddOnItem[] = [
   { id: 'woven-label', name: 'Woven Neck Label' },
   { id: 'hangtag', name: 'Custom Hangtag' },
   { id: 'polybag', name: 'Frosted Poly Bag' },
@@ -80,8 +123,8 @@ const BRANDING_OPTIONS = [
 
 export default function CustomizationEngine() {
   // --- STATE MANAGEMENT ---
-  const [activeTab, setActiveTab] = useState('Product');
-  const [selections, setSelections] = useState({
+  const [activeTab, setActiveTab] = useState<string>('Product');
+  const [selections, setSelections] = useState<SelectionState>({
     product: PRODUCTS[0],
     fabric: { type: 'Fleece', gsm: '400+ GSM', finish: 'Brushed' },
     fit: 'Oversized Fit',
@@ -90,21 +133,27 @@ export default function CustomizationEngine() {
     branding: [],
     customPantone: ''
   });
-  const [customerDetails, setCustomerDetails] = useState({ name: '', email: '', company: '', phone: '', notes: '' });
+  
+  const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({ 
+    name: '', email: '', company: '', phone: '', notes: '' 
+  });
 
-  // Update logic mapped strictly to state
-  const updateFabric = (key, value) => {
+  // --- STRICT TYPED UPDATE FUNCTIONS ---
+  const updateFabric = (key: keyof FabricState, value: string) => {
     setSelections(prev => {
       const newFabric = { ...prev.fabric, [key]: value };
-      // Auto-adjust GSM if fabric type changes and current GSM isn't available
-      if (key === 'type' && !FABRIC_DATA.gsm[value].includes(prev.fabric.gsm)) {
-        newFabric.gsm = FABRIC_DATA.gsm[value][0];
+      
+      // Auto-adjust GSM if fabric type changes
+      if (key === 'type' && FABRIC_DATA.gsm[value]) {
+        if (!FABRIC_DATA.gsm[value].includes(prev.fabric.gsm)) {
+          newFabric.gsm = FABRIC_DATA.gsm[value][0];
+        }
       }
       return { ...prev, fabric: newFabric };
     });
   };
 
-  const toggleArraySelection = (category, item) => {
+  const toggleArraySelection = (category: 'decorations' | 'branding', item: AddOnItem) => {
     setSelections(prev => {
       const currentList = prev[category];
       const exists = currentList.find(i => i.id === item.id);
@@ -117,12 +166,12 @@ export default function CustomizationEngine() {
     });
   };
 
-  const changeProduct = (prod) => {
+  const changeProduct = (prod: Product) => {
     setSelections(prev => ({
       ...prev,
       product: prod,
       fabric: { ...prev.fabric, type: prod.defaultFabric, gsm: FABRIC_DATA.gsm[prod.defaultFabric][0] },
-      color: PRODUCT_COLORS[prod.id][0] // Reset to first color of new product
+      color: PRODUCT_COLORS[prod.id][0] 
     }));
   };
 
@@ -130,7 +179,7 @@ export default function CustomizationEngine() {
 
   // --- RENDER HELPERS ---
   const renderTabNavigation = () => (
-    <div className="flex overflow-x-auto border-b border-gray-200 hide-scroll-bar bg-white sticky top-0 z-20 shadow-sm">
+    <div className="flex overflow-x-auto border-b border-gray-200 bg-white sticky top-0 z-20 shadow-sm scrollbar-hide">
       {tabs.map((tab, idx) => {
         const isActive = activeTab === tab;
         const isCompleted = tabs.indexOf(activeTab) > idx;
@@ -156,7 +205,7 @@ export default function CustomizationEngine() {
     <div className="bg-gray-50 min-h-screen font-sans text-navy pb-32">
       
       {/* HEADER */}
-      <header className="bg-navy text-white py-36 px-6 text-center">
+      <header className="bg-navy text-white py-24 md:py-36 px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold uppercase tracking-widest mb-4">
           Build <span className="text-orange">The Product</span>
         </h1>
@@ -233,7 +282,7 @@ export default function CustomizationEngine() {
                   <div>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 block">Weight (GSM)</label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {FABRIC_DATA.gsm[selections.fabric.type].map(gsm => (
+                      {FABRIC_DATA.gsm[selections.fabric.type]?.map(gsm => (
                         <button
                           key={gsm}
                           onClick={() => updateFabric('gsm', gsm)}
@@ -301,7 +350,7 @@ export default function CustomizationEngine() {
                   <p className="text-gray-500 mb-8">Showing available premium dyes for <strong>{selections.product.name}</strong>.</p>
                   
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                    {PRODUCT_COLORS[selections.product.id].map(color => (
+                    {PRODUCT_COLORS[selections.product.id]?.map(color => (
                       <button
                         key={color.name}
                         onClick={() => setSelections(prev => ({ ...prev, color: color, customPantone: '' }))}
@@ -336,7 +385,7 @@ export default function CustomizationEngine() {
                   <div className="absolute inset-0 transition-colors duration-500 mix-blend-color" style={{ backgroundColor: selections.color?.hex }}></div>
                   
                   <div className="relative z-10 bg-white/90 backdrop-blur p-6 rounded-xl shadow-xl text-center border border-white/50">
-                    <div className="w-16 h-16 rounded-full mx-auto mb-3 shadow-md border-4 border-white" style={{ backgroundColor: selections.color?.hex }}></div>
+                    <div className="w-16 h-16 rounded-full mx-auto mb-3 shadow-md border-4 border-white" style={{ backgroundColor: selections.color?.hex || '#ffffff' }}></div>
                     <p className="font-extrabold text-xl">{selections.color?.name}</p>
                     <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">Selected Shade</p>
                   </div>
@@ -384,7 +433,7 @@ export default function CustomizationEngine() {
 
           </div>
           
-          {/* Navigation Footer within Card */}
+          {/* Navigation Footer */}
           <div className="bg-gray-50 p-6 border-t border-gray-200 flex justify-end">
             <button 
               onClick={() => {
@@ -403,7 +452,6 @@ export default function CustomizationEngine() {
       <section className="max-w-7xl mx-auto mt-16 px-4 md:px-8">
         <div className="bg-navy rounded-3xl p-8 md:p-12 shadow-2xl text-white grid grid-cols-1 lg:grid-cols-2 gap-16 relative overflow-hidden">
           
-          {/* Decorative background elements */}
           <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-orange rounded-full mix-blend-multiply filter blur-[100px] opacity-40"></div>
           <div className="absolute bottom-[-20%] left-[-10%] w-96 h-96 bg-blue rounded-full mix-blend-multiply filter blur-[100px] opacity-40"></div>
 
@@ -430,7 +478,7 @@ export default function CustomizationEngine() {
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Master Color</p>
                   <div className="flex items-center gap-3 mt-1">
-                    <div className="w-6 h-6 rounded-full border border-gray-600 shadow-sm" style={{ backgroundColor: selections.color?.hex }}></div>
+                    <div className="w-6 h-6 rounded-full border border-gray-600 shadow-sm" style={{ backgroundColor: selections.color?.hex || '#ffffff' }}></div>
                     <p className="font-bold">{selections.color?.name}</p>
                   </div>
                 </div>
@@ -462,7 +510,11 @@ export default function CustomizationEngine() {
             <div className="bg-white p-8 rounded-2xl shadow-xl text-navy">
               <h3 className="text-2xl font-extrabold mb-6 flex items-center gap-2"><Send className="text-orange" size={24} /> Get Custom Quote</h3>
               
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); console.log('SUBMITTING PAYLOAD:', { selections, customerDetails }); alert('Requirements logged in console!'); }}>
+              <form className="space-y-4" onSubmit={(e: React.FormEvent<HTMLFormElement>) => { 
+                e.preventDefault(); 
+                console.log('SUBMITTING PAYLOAD:', { selections, customerDetails }); 
+                alert('Requirements logged in console!'); 
+              }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="relative">
                     <User className="absolute left-3 top-3.5 text-gray-400" size={18} />
@@ -471,7 +523,7 @@ export default function CustomizationEngine() {
                       placeholder="Full Name" 
                       required
                       value={customerDetails.name}
-                      onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, name: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
                     />
                   </div>
@@ -481,7 +533,7 @@ export default function CustomizationEngine() {
                       type="text" 
                       placeholder="Brand / Company" 
                       value={customerDetails.company}
-                      onChange={(e) => setCustomerDetails({...customerDetails, company: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, company: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
                     />
                   </div>
@@ -495,7 +547,7 @@ export default function CustomizationEngine() {
                       placeholder="Email Address" 
                       required
                       value={customerDetails.email}
-                      onChange={(e) => setCustomerDetails({...customerDetails, email: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, email: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
                     />
                   </div>
@@ -505,7 +557,7 @@ export default function CustomizationEngine() {
                       type="tel" 
                       placeholder="Phone Number" 
                       value={customerDetails.phone}
-                      onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, phone: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
                     />
                   </div>
@@ -513,9 +565,9 @@ export default function CustomizationEngine() {
 
                 <textarea 
                   placeholder="Additional specific requirements, target quantities, or deadlines..." 
-                  rows="3"
+                  rows={3}
                   value={customerDetails.notes}
-                  onChange={(e) => setCustomerDetails({...customerDetails, notes: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCustomerDetails({...customerDetails, notes: e.target.value})}
                   className="w-full p-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium resize-none"
                 ></textarea>
 
@@ -525,9 +577,6 @@ export default function CustomizationEngine() {
                 >
                   Submit Requirements Request
                 </button>
-                <p className="text-xs text-center text-gray-400 mt-3 font-medium">
-                  By submitting, you send the selected tech pack specs for quotation. No payment required yet.
-                </p>
               </form>
             </div>
           </div>
