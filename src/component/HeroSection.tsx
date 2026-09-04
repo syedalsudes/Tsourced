@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Printer, 
-  Sparkles, 
-  Shirt, 
-  ShoppingBag, 
-  Store, 
-  ArrowRight 
+import {
+  Printer,
+  Sparkles,
+  Shirt,
+  ShoppingBag,
+  Store,
+  ArrowRight
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -26,13 +26,13 @@ const HeroSection = () => {
         alt="Custom Knit Apparel Banner"
         fill
         priority
-        className="object-cover object-right lg:object-center"
+        className="object-cover object-right lg:object-center select-none"
       />
 
       {/* 2. Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-12">
         <div className="max-w-xl lg:max-w-2xl flex flex-col justify-center">
-          
+
           {/* Tagline - Bright Silver/White */}
           <span className="text-[#d1d5db] text-xs font-semibold tracking-[0.22em] uppercase mb-4 drop-shadow-sm">
             Custom Knit Apparel Manufacturing
@@ -71,21 +71,21 @@ const HeroSection = () => {
           </div>
 
           {/* Target Audience Bar */}
-          <div className="pt-6 border-t border-white/20 max-w-lg">
+          <div className="pt-6 border-t border-white/20 max-w-2xl">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#9ca3af] font-semibold mb-4">
               For Apparel Businesses Like Yours
             </p>
-            
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
+
+            <div className="pt-4 grid grid-cols-3 sm:grid-cols-5 gap-3">
               {targetAudience.map((item, index) => {
                 const IconComponent = item.icon;
                 return (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left group cursor-pointer"
                   >
                     <IconComponent className="w-5 h-5 text-[#ffffff] group-hover:text-[#FF5A00] transition-colors" strokeWidth={1.75} />
-                    <span className="text-[11px] sm:text-xs text-[#e5e7eb] font-medium leading-tight">
+                    <span className="text-[11px] sm:text-xs text-[#e5e7eb] font-medium leading-tight whitespace-nowrap">
                       {item.label}
                     </span>
                   </div>
