@@ -1,589 +1,187 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  CheckCircle2, 
-  Scissors, 
-  Shirt, 
-  Palette, 
-  Sparkles, 
-  Tags,
-  ChevronRight,
-  Send,
-  User,
-  Mail,
-  Phone,
-  Building2,
-  Box
-} from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
 
-// --- TYPESCRIPT INTERFACES ---
-interface Product {
-  id: string;
-  name: string;
-  img: string;
-  defaultFabric: string;
-}
-
-interface ColorOption {
-  name: string;
-  hex: string;
-}
-
-interface AddOnItem {
-  id: string;
-  name: string;
-  cost?: string;
-}
-
-interface FabricState {
-  type: string;
-  gsm: string;
-  finish: string;
-}
-
-interface SelectionState {
-  product: Product;
-  fabric: FabricState;
-  fit: string;
-  color: ColorOption | null;
-  decorations: AddOnItem[];
-  branding: AddOnItem[];
-  customPantone: string;
-}
-
-interface CustomerDetails {
-  name: string;
-  email: string;
-  company: string;
-  phone: string;
-  notes: string;
-}
-
-// --- MASTER DATA CONFIGURATION ---
-const PRODUCTS: Product[] = [
-  { id: 'hoodie', name: 'Heavyweight Hoodie', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Fleece' },
-  { id: 'crewneck', name: 'Crewneck Sweatshirt', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80', defaultFabric: 'French Terry' },
-  { id: 'joggers', name: 'Premium Joggers', img: 'https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Fleece' },
-  { id: 'tshirt', name: 'Oversized T-Shirt', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80', defaultFabric: 'Single Jersey' }
-];
-
-const FABRIC_DATA: { types: string[]; gsm: Record<string, string[]>; finishes: string[] } = {
-  types: ['Fleece', 'French Terry', 'Single Jersey', 'Rib'],
-  gsm: {
-    'Fleece': ['280 GSM', '320 GSM', '350 GSM', '400+ GSM'],
-    'French Terry': ['240 GSM', '280 GSM', '320 GSM'],
-    'Single Jersey': ['160 GSM', '180 GSM', '220 GSM', '250 GSM'],
-    'Rib': ['200 GSM', '250 GSM', '300 GSM']
+export const PRODUCTS = [
+  { 
+    id: 'heavyweight-hoodie', 
+    name: 'Heavyweight Hoodie', 
+    category: 'Hoodies',
+    img: '/hoodies.png',
+    desc: 'Premium 400+ GSM fleece built for comfort and durability. Double-lined hood.',
+    moq: '50 pcs',
+    badge: 'Best Seller'
   },
-  finishes: ['Brushed', 'Unbrushed', 'Enzyme Wash', 'Silicone Wash']
-};
-
-const FIT_OPTIONS = [
-  { id: 'regular', name: 'Regular Fit', desc: 'Standard true-to-size fit.' },
-  { id: 'oversized', name: 'Oversized Fit', desc: 'Relaxed, wide-cut body.' },
-  { id: 'drop-shoulder', name: 'Drop Shoulder', desc: 'Extended shoulder seams.' },
-  { id: 'custom', name: 'Custom Pattern', desc: 'Upload your own tech pack.' }
+  { 
+    id: 'oversized-tshirt', 
+    name: 'Oversized Drop-Shoulder Tee', 
+    category: 'T-Shirts',
+    img: '/shirts.png',
+    desc: 'High-quality relaxed fit tees crafted from premium combed cotton jersey.',
+    moq: '100 pcs',
+    badge: null
+  },
+  { 
+    id: 'cargo-pants', 
+    name: 'Tactical Cargo Pants', 
+    category: 'Bottoms',
+    img: '/pants.png',
+    desc: 'Durable cotton canvas with multi-pocket utility design and adjustable cuffs.',
+    moq: '50 pcs',
+    badge: null
+  },
+  { 
+    id: 'premium-joggers', 
+    name: 'Premium Fleece Joggers', 
+    category: 'Bottoms',
+    img: '/trousers.png',
+    desc: 'Comfortable, durable and tailored joggers designed for everyday performance.',
+    moq: '50 pcs',
+    badge: 'Trending'
+  },
 ];
 
-const PRODUCT_COLORS: Record<string, ColorOption[]> = {
-  'hoodie': [
-    { name: 'Onyx Black', hex: '#111111' }, { name: 'Heather Grey', hex: '#9CA3AF' }, 
-    { name: 'Dusty Taupe', hex: '#8B7355' }, { name: 'Midnight Navy', hex: '#092834' },
-    { name: 'Burnt Orange', hex: '#FF5A00' }
-  ],
-  'crewneck': [
-    { name: 'Onyx Black', hex: '#111111' }, { name: 'Vintage White', hex: '#F3F4F6' },
-    { name: 'Forest Green', hex: '#064E3B' }, { name: 'Maroon', hex: '#7F1D1D' }
-  ],
-  'joggers': [
-    { name: 'Onyx Black', hex: '#111111' }, { name: 'Heather Grey', hex: '#9CA3AF' },
-    { name: 'Charcoal', hex: '#374151' }
-  ],
-  'tshirt': [
-    { name: 'Onyx Black', hex: '#111111' }, { name: 'Optic White', hex: '#FFFFFF' },
-    { name: 'Sand', hex: '#D2B48C' }, { name: 'Ocean Blue', hex: '#004e72' }
-  ]
-};
+const CATEGORIES = ['All', 'Hoodies', 'T-Shirts', 'Bottoms'];
 
-const DECORATION_METHODS: AddOnItem[] = [
-  { id: 'screen-print', name: 'Screen Printing', cost: 'Standard' },
-  { id: 'embroidery', name: 'Embroidery', cost: 'Premium' },
-  { id: 'puff-print', name: 'Puff Printing', cost: 'Premium' },
-  { id: 'chenille', name: 'Chenille Patches', cost: 'Luxury' },
-  { id: 'dtg', name: 'DTG Print', cost: 'Standard' }
-];
+export default function CustomCatalogue() {
+  const [activeCategory, setActiveCategory] = useState('All');
 
-const BRANDING_OPTIONS: AddOnItem[] = [
-  { id: 'woven-label', name: 'Woven Neck Label' },
-  { id: 'hangtag', name: 'Custom Hangtag' },
-  { id: 'polybag', name: 'Frosted Poly Bag' },
-  { id: 'silicone-patch', name: 'Silicone Brand Patch' }
-];
-
-export default function CustomizationEngine() {
-  // --- STATE MANAGEMENT ---
-  const [activeTab, setActiveTab] = useState<string>('Product');
-  const [selections, setSelections] = useState<SelectionState>({
-    product: PRODUCTS[0],
-    fabric: { type: 'Fleece', gsm: '400+ GSM', finish: 'Brushed' },
-    fit: 'Oversized Fit',
-    color: PRODUCT_COLORS['hoodie'][0],
-    decorations: [],
-    branding: [],
-    customPantone: ''
-  });
-  
-  const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({ 
-    name: '', email: '', company: '', phone: '', notes: '' 
-  });
-
-  // --- STRICT TYPED UPDATE FUNCTIONS ---
-  const updateFabric = (key: keyof FabricState, value: string) => {
-    setSelections(prev => {
-      const newFabric = { ...prev.fabric, [key]: value };
-      
-      // Auto-adjust GSM if fabric type changes
-      if (key === 'type' && FABRIC_DATA.gsm[value]) {
-        if (!FABRIC_DATA.gsm[value].includes(prev.fabric.gsm)) {
-          newFabric.gsm = FABRIC_DATA.gsm[value][0];
-        }
-      }
-      return { ...prev, fabric: newFabric };
-    });
-  };
-
-  const toggleArraySelection = (category: 'decorations' | 'branding', item: AddOnItem) => {
-    setSelections(prev => {
-      const currentList = prev[category];
-      const exists = currentList.find(i => i.id === item.id);
-      return {
-        ...prev,
-        [category]: exists 
-          ? currentList.filter(i => i.id !== item.id) 
-          : [...currentList, item]
-      };
-    });
-  };
-
-  const changeProduct = (prod: Product) => {
-    setSelections(prev => ({
-      ...prev,
-      product: prod,
-      fabric: { ...prev.fabric, type: prod.defaultFabric, gsm: FABRIC_DATA.gsm[prod.defaultFabric][0] },
-      color: PRODUCT_COLORS[prod.id][0] 
-    }));
-  };
-
-  const tabs = ['Product', 'Fabric', 'Fit', 'Color', 'Decoration', 'Branding'];
-
-  // --- RENDER HELPERS ---
-  const renderTabNavigation = () => (
-    <div className="flex overflow-x-auto border-b border-gray-200 bg-white sticky top-0 z-20 shadow-sm scrollbar-hide">
-      {tabs.map((tab, idx) => {
-        const isActive = activeTab === tab;
-        const isCompleted = tabs.indexOf(activeTab) > idx;
-        return (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`min-w-[140px] flex-1 py-4 px-6 text-sm md:text-base font-bold flex items-center justify-center gap-2 transition-all border-b-4 ${
-              isActive 
-                ? 'text-orange border-orange bg-orange/5' 
-                : 'text-gray-400 border-transparent hover:text-navy hover:bg-gray-50'
-            }`}
-          >
-            {isCompleted ? <CheckCircle2 size={18} className="text-orange" /> : <span className="opacity-50">0{idx + 1}</span>}
-            {tab}
-          </button>
-        );
-      })}
-    </div>
-  );
+  const filteredProducts = activeCategory === 'All' 
+    ? PRODUCTS 
+    : PRODUCTS.filter(prod => prod.category === activeCategory);
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans text-navy pb-32">
+    <div className="min-h-screen bg-gray-50 pb-24 font-sans text-navy selection:bg-orange selection:text-white">
       
-      {/* HEADER */}
-      <header className="bg-navy text-white py-24 md:py-36 px-6 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold uppercase tracking-widest mb-4">
-          Build <span className="text-orange">The Product</span>
-        </h1>
-        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-          Select every detail from thread to packaging. Your selections are logged below in real-time.
-        </p>
+      {/* Consolidated Curved Hero Section */}
+      <header className="relative w-full bg-navy pt-32 pb-40 px-6 md:px-12 shadow-md overflow-hidden">
+        {/* Abstract Background Blurs for Premium Feel */}
+        <div className="absolute top-[-20%] right-[-5%] w-[400px] h-[400px] bg-orange rounded-full mix-blend-screen filter blur-[120px] opacity-20"></div>
+        <div className="absolute bottom-[-20%] left-[-5%] w-[300px] h-[300px] bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center">
+          <p className="text-orange font-bold tracking-widest uppercase text-sm mb-4 flex items-center gap-2">
+            <span className="w-8 h-[2px] bg-orange inline-block"></span> Base Canvas Collection <span className="w-8 h-[2px] bg-orange inline-block"></span>
+          </p>
+          
+          <h1 className="text-4xl md:text-6xl font-extrabold uppercase tracking-tight mb-6 text-white leading-tight">
+            Build Your Brand's <br />
+            <span className="text-orange">Next Silhouette</span>
+          </h1>
+          
+          <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-10">
+            Select a premium blank from our manufacturing catalogue below. Scroll through our categories to find the perfect canvas to build your tech-pack instantly.
+          </p>
+
+          {/* B2B Value Props properly aligned in hero */}
+          <div className="flex flex-wrap justify-center gap-4 text-white text-sm font-medium">
+            <div className="flex items-center gap-2 bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-sm border border-white/10 shadow-lg">
+              <ShieldCheck className="text-orange" size={18} /> Premium Fabrics
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-sm border border-white/10 shadow-lg">
+              <Package className="text-orange" size={18} /> Low Minimums
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-sm border border-white/10 shadow-lg">
+              <Zap className="text-orange" size={18} /> Fast Turnaround
+            </div>
+          </div>
+        </div>
+
+        {/* SVG Curve at the Bottom */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none transform translate-y-[1px]">
+          <svg className="relative block w-full h-[60px] md:h-[120px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.1,130.83,115.1,188.73,109.18C233.72,104.53,277.6,83.9,321.39,56.44Z" className="fill-gray-50"></path>
+          </svg>
+        </div>
       </header>
+    
+      {/* Main Catalogue Section */}
+      <section className="max-w-7xl mx-auto px-6 md:px-12 relative z-20">
+        
+        {/* Filters and Controls - overlapping the curve gracefully */}
+        <div className="flex flex-col items-center justify-center mb-16 -mt-16 gap-4">
+          <div className="flex items-center gap-2 bg-white p-2 rounded-full shadow-xl border border-gray-100 overflow-x-auto max-w-full">
+            <div className="pl-4 pr-2 text-orange hidden md:block">
+              <SlidersHorizontal size={20} />
+            </div>
+            {CATEGORIES.map(category => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${
+                  activeCategory === category 
+                    ? 'bg-navy text-white shadow-md' 
+                    : 'text-gray-500 hover:text-navy hover:bg-gray-50'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          
+          <div className="text-sm font-bold text-gray-500 bg-white/50 px-4 py-1.5 rounded-full">
+            Showing <span className="text-navy">{filteredProducts.length}</span> Products
+          </div>
+        </div>
 
-      {/* MAIN BUILDER SECTION */}
-      <main className="max-w-7xl mx-auto mt-[-2rem] px-4 md:px-8 relative z-10">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          {renderTabNavigation()}
-
-          <div className="p-8 md:p-12 min-h-[500px]">
-            
-            {/* STEP 1: PRODUCT */}
-            {activeTab === 'Product' && (
-              <div className="animate-fadeIn">
-                <h2 className="text-2xl font-extrabold mb-8 text-navy flex items-center gap-3">
-                  <Box className="text-orange" /> Select Canvas
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {PRODUCTS.map(prod => (
-                    <div 
-                      key={prod.id}
-                      onClick={() => changeProduct(prod)}
-                      className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all duration-300 group ${
-                        selections.product.id === prod.id ? 'border-orange ring-4 ring-orange/20' : 'border-gray-100 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="h-64 bg-cover bg-center relative" style={{backgroundImage: `url(${prod.img})`}}>
-                        <div className="absolute inset-0 bg-navy/10 group-hover:bg-transparent transition-all"></div>
-                        {selections.product.id === prod.id && (
-                          <div className="absolute top-4 right-4 bg-white rounded-full p-1 shadow-lg">
-                            <CheckCircle2 className="text-orange" size={24} />
-                          </div>
-                        )}
-                      </div>
-                      <div className={`p-4 font-bold text-center ${selections.product.id === prod.id ? 'bg-orange text-white' : 'bg-white text-navy'}`}>
-                        {prod.name}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: FABRIC */}
-            {activeTab === 'Fabric' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-fadeIn">
-                <div className="col-span-1 space-y-6">
-                  <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-3"><Scissors className="text-orange"/> Fabric Details</h2>
-                  
-                  <div>
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Material Type</label>
-                    <div className="space-y-3">
-                      {FABRIC_DATA.types.map(type => (
-                        <button
-                          key={type}
-                          onClick={() => updateFabric('type', type)}
-                          className={`w-full text-left px-5 py-4 rounded-lg font-bold border-2 transition-all flex justify-between items-center ${
-                            selections.fabric.type === type ? 'bg-navy border-navy text-white shadow-lg' : 'bg-white border-gray-200 text-navy hover:border-orange'
-                          }`}
-                        >
-                          {type}
-                          {selections.fabric.type === type && <div className="w-2.5 h-2.5 rounded-full bg-orange shadow-[0_0_8px_#FF5A00]"></div>}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-span-2 space-y-8 bg-gray-50 p-8 rounded-2xl border border-gray-100">
-                  <div>
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 block">Weight (GSM)</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {FABRIC_DATA.gsm[selections.fabric.type]?.map(gsm => (
-                        <button
-                          key={gsm}
-                          onClick={() => updateFabric('gsm', gsm)}
-                          className={`py-3 rounded-lg font-bold border-2 transition-all ${
-                            selections.fabric.gsm === gsm ? 'bg-orange text-white border-orange shadow-md' : 'bg-white border-gray-200 text-navy hover:border-orange'
-                          }`}
-                        >
-                          {gsm}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 block">Surface Finish</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {FABRIC_DATA.finishes.map(finish => (
-                        <button
-                          key={finish}
-                          onClick={() => updateFabric('finish', finish)}
-                          className={`py-4 px-6 rounded-lg font-bold border-2 text-left transition-all ${
-                            selections.fabric.finish === finish ? 'bg-blue/5 border-blue text-blue shadow-sm' : 'bg-white border-gray-200 hover:border-blue'
-                          }`}
-                        >
-                          {finish}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: FIT */}
-            {activeTab === 'Fit' && (
-              <div className="animate-fadeIn">
-                <h2 className="text-2xl font-extrabold mb-8 flex items-center gap-3"><Shirt className="text-orange"/> Silhouette & Fit</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {FIT_OPTIONS.map(fit => (
-                    <div 
-                      key={fit.id}
-                      onClick={() => setSelections(prev => ({ ...prev, fit: fit.name }))}
-                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 text-center flex flex-col items-center justify-center min-h-[200px] ${
-                        selections.fit === fit.name ? 'border-orange bg-orange/5 shadow-lg scale-105' : 'border-gray-200 bg-white hover:border-orange hover:shadow-md'
-                      }`}
-                    >
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
-                        selections.fit === fit.name ? 'bg-orange text-white' : 'bg-gray-100 text-gray-400'
-                      }`}>
-                        <Shirt size={32} />
-                      </div>
-                      <h3 className="font-extrabold text-lg mb-2">{fit.name}</h3>
-                      <p className="text-sm text-gray-500">{fit.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 4: COLOR */}
-            {activeTab === 'Color' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-fadeIn">
-                <div>
-                  <h2 className="text-2xl font-extrabold mb-4 flex items-center gap-3"><Palette className="text-orange"/> Choose Brand Color</h2>
-                  <p className="text-gray-500 mb-8">Showing available premium dyes for <strong>{selections.product.name}</strong>.</p>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                    {PRODUCT_COLORS[selections.product.id]?.map(color => (
-                      <button
-                        key={color.name}
-                        onClick={() => setSelections(prev => ({ ...prev, color: color, customPantone: '' }))}
-                        className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${
-                          selections.color?.name === color.name ? 'border-orange shadow-md bg-white' : 'border-gray-100 bg-gray-50 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="w-12 h-12 rounded-full mb-3 shadow-inner border border-gray-200" style={{ backgroundColor: color.hex }}></div>
-                        <span className="text-sm font-bold text-center">{color.name}</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-                    <label className="text-sm font-bold text-navy mb-2 block">Custom Pantone (Optional)</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. PMS 202 C" 
-                      value={selections.customPantone}
-                      onChange={(e) => setSelections(prev => ({ 
-                        ...prev, 
-                        customPantone: e.target.value,
-                        color: e.target.value ? { name: `Custom: ${e.target.value}`, hex: '#ffffff' } : PRODUCT_COLORS[selections.product.id][0]
-                      }))}
-                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent font-medium"
-                    />
-                  </div>
-                </div>
-
-                <div className="bg-gray-100 rounded-2xl flex items-center justify-center p-12 min-h-[400px] relative overflow-hidden">
-                  <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-multiply" style={{backgroundImage: `url(${selections.product.img})`}}></div>
-                  <div className="absolute inset-0 transition-colors duration-500 mix-blend-color" style={{ backgroundColor: selections.color?.hex }}></div>
-                  
-                  <div className="relative z-10 bg-white/90 backdrop-blur p-6 rounded-xl shadow-xl text-center border border-white/50">
-                    <div className="w-16 h-16 rounded-full mx-auto mb-3 shadow-md border-4 border-white" style={{ backgroundColor: selections.color?.hex || '#ffffff' }}></div>
-                    <p className="font-extrabold text-xl">{selections.color?.name}</p>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">Selected Shade</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 5 & 6: DECORATION & BRANDING */}
-            {(activeTab === 'Decoration' || activeTab === 'Branding') && (
-              <div className="animate-fadeIn">
-                <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-3">
-                  {activeTab === 'Decoration' ? <Sparkles className="text-orange"/> : <Tags className="text-orange"/>} 
-                  {activeTab === 'Decoration' ? 'Art & Decoration' : 'Trims & Packaging'}
-                </h2>
-                <p className="text-gray-500 mb-8">Select multiple options. These define your final retail presentation.</p>
+        {/* Product Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProducts.map(prod => (
+            <Link href={`/customization/${prod.id}`} key={prod.id} className="group">
+              <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-orange/30 transition-all duration-500 flex flex-col h-full transform hover:-translate-y-2">
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'Decoration' ? DECORATION_METHODS : BRANDING_OPTIONS).map(item => {
-                    const category = activeTab === 'Decoration' ? 'decorations' : 'branding';
-                    const isSelected = selections[category].find(i => i.id === item.id);
-                    
-                    return (
-                      <div 
-                        key={item.id}
-                        onClick={() => toggleArraySelection(category, item)}
-                        className={`cursor-pointer p-6 rounded-xl border-2 transition-all flex items-start gap-4 ${
-                          isSelected ? 'border-blue bg-blue/5 shadow-md' : 'border-gray-200 bg-white hover:border-blue/50'
-                        }`}
-                      >
-                        <div className={`mt-1 w-6 h-6 rounded flex items-center justify-center border-2 shrink-0 ${
-                          isSelected ? 'bg-blue border-blue text-white' : 'border-gray-300'
-                        }`}>
-                          {isSelected && <CheckCircle2 size={16} />}
-                        </div>
-                        <div>
-                          <h3 className={`font-extrabold text-lg ${isSelected ? 'text-blue' : 'text-navy'}`}>{item.name}</h3>
-                          {item.cost && <span className="text-xs font-bold text-gray-400 uppercase">{item.cost} Tier</span>}
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Image Container */}
+                <div className="h-80 w-full bg-gray-100 overflow-hidden relative">
+                  {prod.badge && (
+                    <div className="absolute top-5 left-5 z-20 bg-orange text-white text-[10px] font-extrabold uppercase tracking-widest py-2 px-4 rounded-full shadow-lg">
+                      {prod.badge}
+                    </div>
+                  )}
+                  
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
+                    style={{backgroundImage: `url(${prod.img})`}}
+                  ></div>
+                  
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/30 transition-colors duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <span className="bg-white text-navy font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl flex items-center gap-2">
+                      Configure <ArrowRight size={18} className="text-orange" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+                
+                {/* Content Container */}
+                <div className="p-8 flex flex-col flex-grow relative bg-white">
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="text-xs font-extrabold text-orange uppercase tracking-widest">{prod.category}</p>
+                    <span className="text-xs font-bold text-gray-500 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full shadow-sm">
+                      MOQ: {prod.moq}
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-2xl font-extrabold text-navy mb-3 group-hover:text-orange transition-colors">{prod.name}</h3>
+                  <p className="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">{prod.desc}</p>
+                  
+                  <div className="w-full h-[1px] bg-gray-100 mb-5 group-hover:bg-orange/20 transition-colors"></div>
+                  
+                  <div className="flex items-center justify-between text-sm font-bold text-navy group-hover:text-orange transition-colors">
+                    <span>Select & Customize</span>
+                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-orange/10 transition-colors">
+                      <ArrowRight size={16} className="text-gray-400 group-hover:text-orange transform group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </div>
+                </div>
 
-          </div>
-          
-          {/* Navigation Footer */}
-          <div className="bg-gray-50 p-6 border-t border-gray-200 flex justify-end">
-            <button 
-              onClick={() => {
-                const currentIndex = tabs.indexOf(activeTab);
-                if (currentIndex < tabs.length - 1) setActiveTab(tabs[currentIndex + 1]);
-              }}
-              className="bg-navy text-white px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-orange transition-colors"
-            >
-              {activeTab === 'Branding' ? 'Review Below' : 'Next Step'} <ChevronRight size={20} />
-            </button>
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
-      </main>
 
-      {/* --- LIVE SUMMARY & FINAL FORM SECTION --- */}
-      <section className="max-w-7xl mx-auto mt-16 px-4 md:px-8">
-        <div className="bg-navy rounded-3xl p-8 md:p-12 shadow-2xl text-white grid grid-cols-1 lg:grid-cols-2 gap-16 relative overflow-hidden">
-          
-          <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-orange rounded-full mix-blend-multiply filter blur-[100px] opacity-40"></div>
-          <div className="absolute bottom-[-20%] left-[-10%] w-96 h-96 bg-blue rounded-full mix-blend-multiply filter blur-[100px] opacity-40"></div>
-
-          {/* Left: Dynamic Build Summary */}
-          <div className="relative z-10">
-            <h2 className="text-3xl font-extrabold mb-2 text-white">Your Tech Pack <span className="text-orange">Summary</span></h2>
-            <p className="text-gray-400 mb-8 text-sm">Review your custom specifications before submitting.</p>
-            
-            <div className="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="flex justify-between items-end border-b border-white/10 pb-4">
-                <div>
-                  <p className="text-xs text-orange font-bold uppercase tracking-widest mb-1">Base Product</p>
-                  <p className="text-xl font-extrabold">{selections.product.name}</p>
-                </div>
-                <p className="font-bold text-gray-300">{selections.fit}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 pb-4 border-b border-white/10">
-                <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Fabric Shell</p>
-                  <p className="font-bold">{selections.fabric.type} • {selections.fabric.gsm}</p>
-                  <p className="text-sm text-gray-300 mt-1">{selections.fabric.finish} Finish</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Master Color</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <div className="w-6 h-6 rounded-full border border-gray-600 shadow-sm" style={{ backgroundColor: selections.color?.hex || '#ffffff' }}></div>
-                    <p className="font-bold">{selections.color?.name}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Decorations</p>
-                  {selections.decorations.length > 0 ? (
-                    <ul className="space-y-1">
-                      {selections.decorations.map(d => <li key={d.id} className="text-sm font-medium text-gray-200 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue"></span> {d.name}</li>)}
-                    </ul>
-                  ) : <p className="text-sm text-gray-500 italic">None selected</p>}
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2">Trims & Branding</p>
-                  {selections.branding.length > 0 ? (
-                    <ul className="space-y-1">
-                      {selections.branding.map(b => <li key={b.id} className="text-sm font-medium text-gray-200 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-orange"></span> {b.name}</li>)}
-                    </ul>
-                  ) : <p className="text-sm text-gray-500 italic">None selected</p>}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Lead Capture Form */}
-          <div className="relative z-10 flex flex-col justify-center">
-            <div className="bg-white p-8 rounded-2xl shadow-xl text-navy">
-              <h3 className="text-2xl font-extrabold mb-6 flex items-center gap-2"><Send className="text-orange" size={24} /> Get Custom Quote</h3>
-              
-              <form className="space-y-4" onSubmit={(e: React.FormEvent<HTMLFormElement>) => { 
-                e.preventDefault(); 
-                console.log('SUBMITTING PAYLOAD:', { selections, customerDetails }); 
-                alert('Requirements logged in console!'); 
-              }}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="relative">
-                    <User className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                    <input 
-                      type="text" 
-                      placeholder="Full Name" 
-                      required
-                      value={customerDetails.name}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, name: e.target.value})}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
-                    />
-                  </div>
-                  <div className="relative">
-                    <Building2 className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                    <input 
-                      type="text" 
-                      placeholder="Brand / Company" 
-                      value={customerDetails.company}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, company: e.target.value})}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                    <input 
-                      type="email" 
-                      placeholder="Email Address" 
-                      required
-                      value={customerDetails.email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, email: e.target.value})}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
-                    />
-                  </div>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                    <input 
-                      type="tel" 
-                      placeholder="Phone Number" 
-                      value={customerDetails.phone}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomerDetails({...customerDetails, phone: e.target.value})}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium" 
-                    />
-                  </div>
-                </div>
-
-                <textarea 
-                  placeholder="Additional specific requirements, target quantities, or deadlines..." 
-                  rows={3}
-                  value={customerDetails.notes}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCustomerDetails({...customerDetails, notes: e.target.value})}
-                  className="w-full p-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange font-medium resize-none"
-                ></textarea>
-
-                <button 
-                  type="submit"
-                  className="w-full bg-orange text-white py-4 rounded-lg font-extrabold text-lg hover:bg-navy transition-colors shadow-lg shadow-orange/30 mt-2"
-                >
-                  Submit Requirements Request
-                </button>
-              </form>
-            </div>
-          </div>
-          
-        </div>
       </section>
-
+      
     </div>
   );
 }
