@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, ArrowLeft, Plus, Minus, Check, Droplet, Ruler, Scissors } from 'lucide-react';
 import Link from 'next/link';
-
-// Make sure PRODUCTS is exported from your main customization/page.tsx file
-import { PRODUCTS } from '../page';
+import { PRODUCTS } from '@/lib/products';
 
 interface QuoteItem {
   fabric: string;
