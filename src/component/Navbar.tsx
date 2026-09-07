@@ -3,16 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronRight } from "lucide-react";
-import { PRODUCTS, CATEGORIES, Product } from "@/lib/products";
+import { ArrowRight, ChevronRight, ShoppingBag } from "lucide-react";
+import { PRODUCTS, CATEGORIES } from "@/lib/products";
+import { useCart } from "@/context/CartContext";
 
 // Filter out 'All' for Navbar sub-menu
 const NAV_CATEGORIES = CATEGORIES.filter((cat) => cat !== "All");
 
 export default function Navbar() {
+  const { cart } = useCart();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Total items in cart count calculation
+  const totalCartCount = cart.length;
 
   // Default active category
   const [activeCategory, setActiveCategory] = useState<string>(NAV_CATEGORIES[0] || "Hoodies");
@@ -72,7 +77,7 @@ export default function Navbar() {
             onMouseLeave={() => setIsDropdownOpen(false)}
           >
             <button
-              className="flex items-center gap-1.5 hover:text-[#FF5A00] transition-colors duration-200 focus:outline-none py-2"
+              className="flex items-center gap-1.5 hover:text-[#FF5A00] transition-colors duration-200 focus:outline-none py-2 cursor-pointer"
               aria-expanded={isDropdownOpen}
             >
               <Link href="/products" className="hover:text-[#FF5A00] transition-colors duration-200">
@@ -159,7 +164,7 @@ export default function Navbar() {
                         </Link>
                       </div>
 
-                      {/* Product Preview Cards (Central Array Dynamic) */}
+                      {/* Product Preview Cards */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {activeProducts.map((prod) => (
                           <Link
@@ -216,33 +221,58 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Action Button */}
-        <div className="hidden md:flex items-center">
+        {/* Action Buttons (Cart + Quote) */}
+        <div className="flex items-center gap-4">
+          
+          {/* CART BUTTON WITH BADGE */}
           <Link
-            href="/contact"
-            className="bg-[#FF5A00] hover:bg-[#e04f00] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out shadow-md shadow-[#FF5A00]/25 hover:-translate-y-0.5"
-          >
-            Get a Quote
-          </Link>
-        </div>
-
-        {/* Mobile Hamburger Button */}
-        <div className="md:hidden flex items-center">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`p-2 focus:outline-none transition-colors duration-200 ${
-              isSolidTheme ? "text-[#092834] hover:text-[#FF5A00]" : "text-white hover:text-[#FF5A00]"
+            href="/cart"
+            className={`relative p-2.5 rounded-xl transition-all duration-200 ease-out flex items-center justify-center ${
+              isSolidTheme
+                ? "bg-gray-100 text-[#092834] hover:bg-gray-200 hover:text-[#FF5A00]"
+                : "bg-white/10 text-white hover:bg-white/20 hover:text-[#FF5A00]"
             }`}
-            aria-label="Toggle menu"
+            aria-label="View Cart"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {isMobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+            <ShoppingBag className="w-5 h-5" />
+
+            {/* Badge Counter */}
+            {totalCartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-[#FF5A00] text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-scale-in">
+                {totalCartCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Desktop Get Quote CTA */}
+          <div className="hidden md:flex items-center">
+            <Link
+              href="/contact"
+              className="bg-[#FF5A00] hover:bg-[#e04f00] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out shadow-md shadow-[#FF5A00]/25 hover:-translate-y-0.5"
+            >
+              Get a Quote
+            </Link>
+          </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-2 focus:outline-none transition-colors duration-200 ${
+                isSolidTheme ? "text-[#092834] hover:text-[#FF5A00]" : "text-white hover:text-[#FF5A00]"
+              }`}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+
         </div>
       </div>
 
