@@ -4,88 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronRight } from "lucide-react";
+import { PRODUCTS, CATEGORIES, Product } from "@/lib/products";
 
-const productCategories = [
-  {
-    id: "hoodies",
-    label: "Hoodies",
-    href: "#hoodies",
-    featuredProducts: [
-      { name: "Heavyweight Pullover Hoodie", gsm: "400 GSM", image: "/hoodie.png", href: "/hoodies/heavyweight" },
-      { name: "Vintage Wash French Terry", gsm: "380 GSM", image: "/shirt.png", href: "/hoodies/vintage" },
-      { name: "Oversized Streetwear Hoodie", gsm: "450 GSM", image: "/hoodie.png", href: "/hoodies/oversized" },
-    ],
-  },
-  {
-    id: "crewneck",
-    label: "Crewneck",
-    href: "#crewneck",
-    featuredProducts: [
-      { name: "Classic Brushed Fleece Crew", gsm: "360 GSM", image: "/shirt.png", href: "/crewneck/classic" },
-      { name: "Drop-Shoulder Boxy Crewneck", gsm: "420 GSM", image: "/shirt.png", href: "/crewneck/boxy" },
-    ],
-  },
-  {
-    id: "zipper-hoodies",
-    label: "Zipper Hoodies",
-    href: "#zipper-hoodies",
-    featuredProducts: [
-      { name: "Full-Zip Heavy Fleece Hoodie", gsm: "400 GSM", image: "/hoodie.png", href: "/zipper-hoodies/full-zip" },
-      { name: "Two-Way YKK Zipper Hoodie", gsm: "420 GSM", image: "/hoodie.png", href: "/zipper-hoodies/ykk" },
-    ],
-  },
-  {
-    id: "youth",
-    label: "Youth",
-    href: "#youth",
-    featuredProducts: [
-      { name: "Youth Heavyweight Hoodie", gsm: "320 GSM", image: "/hoodie.png", href: "/youth/hoodies" },
-      { name: "Kids Everyday Crewneck", gsm: "300 GSM", image: "/shirt.png", href: "/youth/crewnecks" },
-    ],
-  },
-  {
-    id: "bottoms",
-    label: "Bottoms",
-    href: "#bottoms",
-    featuredProducts: [
-      { name: "Heavy Fleece Sweatpants", gsm: "400 GSM", image: "/hoodie.png", href: "/bottoms/sweatpants" },
-      { name: "Straight Leg Fleece Jogger", gsm: "380 GSM", image: "/hoodie.png", href: "/bottoms/joggers" },
-    ],
-  },
-  {
-    id: "t-shirts",
-    label: "T-Shirts",
-    href: "#t-shirts",
-    featuredProducts: [
-      { name: "Heavyweight Boxy Tee", gsm: "280 GSM", image: "/shirt.png", href: "/t-shirts/boxy" },
-      { name: "Vintage Oversized Tee", gsm: "240 GSM", image: "/shirt.png", href: "/t-shirts/oversized" },
-      { name: "Classic Combed Cotton Tee", gsm: "220 GSM", image: "/shirt.png", href: "/t-shirts/classic" },
-    ],
-  },
-  {
-    id: "bundles",
-    label: "Bundles",
-    href: "#bundles",
-    featuredProducts: [
-      { name: "Sample Evaluation Bundle", gsm: "Multi-weight", image: "/hoodie.png", href: "/bundles/sample" },
-      { name: "Matching Tracksuit Set", gsm: "400 GSM", image: "/hoodie.png", href: "/bundles/tracksuit" },
-    ],
-  },
-  {
-    id: "catalog",
-    label: "Catalog",
-    href: "#catalog",
-    featuredProducts: [
-      { name: "Full Manufacturing Catalog", gsm: "2026 Collection", image: "/shirt.png", href: "/catalog" },
-    ],
-  },
-];
+// Filter out 'All' for Navbar sub-menu
+const NAV_CATEGORIES = CATEGORIES.filter((cat) => cat !== "All");
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(productCategories[0]);
+
+  // Default active category
+  const [activeCategory, setActiveCategory] = useState<string>(NAV_CATEGORIES[0] || "Hoodies");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,16 +32,18 @@ export default function Navbar() {
 
   const isSolidTheme = isScrolled || isDropdownOpen;
 
+  // Active category ke hisaab se products filter kar rahe hain
+  const activeProducts = PRODUCTS.filter((p) => p.category === activeCategory);
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ease-out ${
         isSolidTheme
           ? "bg-white backdrop-blur-md shadow-md border-b border-gray-200"
-          : "bg-transparent border-b border-transparent"
+          : "bg-navy border-b border-transparent"
       }`}
     >
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-        
         {/* Brand Logo */}
         <div className="flex-shrink-0">
           <Link href="/" className="text-2xl font-black tracking-tight flex items-center">
@@ -143,7 +75,9 @@ export default function Navbar() {
               className="flex items-center gap-1.5 hover:text-[#FF5A00] transition-colors duration-200 focus:outline-none py-2"
               aria-expanded={isDropdownOpen}
             >
-              <span>Products</span>
+              <Link href="/products" className="hover:text-[#FF5A00] transition-colors duration-200">
+                <span>Products</span>
+              </Link>
               <svg
                 className={`w-4 h-4 transition-transform duration-300 ease-out ${
                   isDropdownOpen
@@ -170,7 +104,6 @@ export default function Navbar() {
             >
               <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
                 <div className="grid grid-cols-12 gap-8 items-start">
-                  
                   {/* Left: Garment Categories List */}
                   <div className="col-span-4 border-r border-gray-200 pr-6 space-y-1">
                     <span className="text-gray-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-3 block">
@@ -178,11 +111,11 @@ export default function Navbar() {
                     </span>
 
                     <div className="space-y-1">
-                      {productCategories.map((category) => {
-                        const isActive = activeCategory.id === category.id;
+                      {NAV_CATEGORIES.map((category) => {
+                        const isActive = activeCategory === category;
                         return (
                           <div
-                            key={category.id}
+                            key={category}
                             onMouseEnter={() => setActiveCategory(category)}
                             className={`flex items-center justify-between px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-out ${
                               isActive
@@ -190,8 +123,8 @@ export default function Navbar() {
                                 : "text-[#092834] hover:text-[#FF5A00] hover:bg-gray-50 font-medium"
                             }`}
                           >
-                            <Link href={category.href} className="text-sm">
-                              {category.label}
+                            <Link href={`/products?category=${category}`} className="text-sm w-full block">
+                              {category}
                             </Link>
                             <ChevronRight
                               className={`w-4 h-4 transition-all duration-200 ease-out ${
@@ -213,37 +146,39 @@ export default function Navbar() {
                             Category Preview
                           </span>
                           <h3 className="text-xl font-extrabold text-[#092834]">
-                            {activeCategory.label} Essentials
+                            {activeCategory} Essentials
                           </h3>
                         </div>
 
                         <Link
-                          href={activeCategory.href}
+                          href={`/products?category=${activeCategory}`}
                           className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FF5A00] hover:text-[#e04f00] transition-colors duration-200"
                         >
-                          <span>Explore All {activeCategory.label}</span>
+                          <span>Explore All {activeCategory}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
 
-                      {/* Product Preview Cards */}
+                      {/* Product Preview Cards (Central Array Dynamic) */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {activeCategory.featuredProducts.map((prod, pIndex) => (
+                        {activeProducts.map((prod) => (
                           <Link
-                            key={pIndex}
-                            href={prod.href}
+                            key={prod.id}
+                            href={`/products/${prod.id}`}
                             className="group bg-[#f8f9fa] hover:bg-white rounded-2xl p-4 border border-gray-200/80 hover:border-[#FF5A00]/40 shadow-xs hover:shadow-lg transition-all duration-300 ease-out flex flex-col justify-between"
                           >
                             <div className="relative w-full h-44 bg-[#f1f3f5] rounded-xl overflow-hidden mb-3.5 flex items-center justify-center">
                               <Image
-                                src={prod.image}
+                                src={prod.img}
                                 alt={prod.name}
                                 fill
                                 className="object-contain p-3 group-hover:scale-105 transition-transform duration-300 ease-out"
                               />
-                              <span className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-xs text-[#092834] border border-gray-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
-                                {prod.gsm}
-                              </span>
+                              {prod.weights[0] && (
+                                <span className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-xs text-[#092834] border border-gray-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
+                                  {prod.weights[0]}
+                                </span>
+                              )}
                             </div>
 
                             <div>
@@ -259,7 +194,6 @@ export default function Navbar() {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -327,13 +261,13 @@ export default function Navbar() {
               Products
             </span>
             <div className="grid grid-cols-2 gap-2 pl-2">
-              {productCategories.map((item) => (
+              {NAV_CATEGORIES.map((category) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  key={category}
+                  href={`/products?category=${category}`}
                   className="text-sm text-gray-600 hover:text-[#FF5A00] py-1 font-medium"
                 >
-                  {item.label}
+                  {category}
                 </Link>
               ))}
             </div>

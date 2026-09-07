@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, ArrowLeft, Plus, Minus, Check, Droplet, Ruler, Scissors } from 'lucide-react';
 import Link from 'next/link';
-import { PRODUCTS } from '@/lib/products';
+import { PRODUCTS } from '@/lib/customdata';
 
 interface QuoteItem {
-  fabric: string;
-  gsm: string;
-  fit: string;
+  fabric: string[];
+  gsm: string[];
+  fit: string[];
   color: string;
   decorations: string[];
   quantity: number;
@@ -17,16 +17,17 @@ interface QuoteItem {
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<any>(null);
   
+  // Initial state me quantity ko 0 set kiya gaya hai
   const [selections, setSelections] = useState<QuoteItem>({
-    fabric: 'Fleece',
-    gsm: '320 GSM',
-    fit: 'Regular Fit',
+    fabric: [],
+    gsm: [],
+    fit: [],
     color: '',
     decorations: [],
-    quantity: 100
+    quantity: 0
   });
 
-  // Mock Options for interactive grids
+  // Mock Options
   const fabricOptions = ['Fleece', 'French Terry', 'Cotton Twill', 'Single Jersey'];
   const gsmOptions = ['280 GSM', '320 GSM', '350 GSM', '400+ GSM'];
   const fitOptions = ['Regular Fit', 'Oversized', 'Drop Shoulder', 'Boxy Fit'];
@@ -45,23 +46,45 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
-  const toggleDecoration = (item: string) => {
-    setSelections(prev => ({
-      ...prev,
-      decorations: prev.decorations.includes(item) 
-        ? prev.decorations.filter(d => d !== item) 
-        : [...prev.decorations, item]
-    }));
+  // Generic multi-select toggle helper
+  const toggleSelection = (key: 'fabric' | 'gsm' | 'fit' | 'decorations', value: string) => {
+    setSelections(prev => {
+      const exists = prev[key].includes(value);
+      return {
+        ...prev,
+        [key]: exists 
+          ? prev[key].filter(item => item !== value)
+          : [...prev[key], value]
+      };
+    });
   };
 
+  // Quantity ko 1 se increment / decrement karne ke liye helper function
   const updateQuantity = (amount: number) => {
     setSelections(prev => ({
       ...prev,
-      quantity: Math.max(50, prev.quantity + amount) // Minimum 50 MOQ
+      quantity: Math.max(0, prev.quantity + amount)
     }));
   };
 
+  // Direct Typing handle karne ke liye function
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value, 10);
+    setSelections(prev => ({
+      ...prev,
+      quantity: isNaN(val) ? 0 : Math.max(0, val)
+    }));
+  };
+
+  // Validation: Fabric, GSM, Fit teeno select hon AND Quantity > 0 honi chahiye
+  const isFormValid = 
+    selections.fabric.length > 0 && 
+    selections.gsm.length > 0 && 
+    selections.fit.length > 0 &&
+    selections.quantity > 0;
+
   const handleAddToQuote = () => {
+    if (!isFormValid) return;
     console.log('Added to Quote Cart:', { product: product.name, ...selections });
     alert(`${product.name} added to your quote cart successfully!`);
   };
@@ -76,14 +99,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           Back to Catalogue
         </Link>
 
-        {/* Main Product Configurator Card (overflow-hidden removed to fix sticky behavior) */}
+        {/* Main Product Configurator Card */}
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 flex flex-col lg:flex-row">
           
           {/* LEFT COLUMN: Sticky Image Showcase */}
           <div className="lg:w-1/2 p-6 lg:p-10 bg-gray-50/50 border-r border-gray-100 rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none">
-            {/* STICKY CONTAINER */}
             <div className="sticky top-32 h-max w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-inner bg-gray-200 group">
-              {/* Premium Image with subtle scale effect */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
                 style={{ backgroundImage: `url(${product.img})` }}
@@ -104,74 +125,88 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
             <div className="space-y-10">
               
-              {/* FABRIC SELECTION */}
+              {/* FABRIC SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
-                  <Scissors className="text-orange" size={18}/> Fabric Shell
+                  <Scissors className="text-orange" size={18}/> Fabric Shell <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {fabricOptions.map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setSelections({...selections, fabric: opt})}
-                      className={`py-4 px-4 rounded-xl border-2 text-sm font-bold text-left transition-all flex justify-between items-center ${
-                        selections.fabric === opt 
-                          ? 'border-orange bg-orange/5 text-orange shadow-sm' 
-                          : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {opt}
-                      {selections.fabric === opt && <Check size={16} />}
-                    </button>
-                  ))}
+                  {fabricOptions.map(opt => {
+                    const isSelected = selections.fabric.includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleSelection('fabric', opt)}
+                        className={`py-4 px-4 rounded-xl border-2 text-sm font-bold text-left transition-all flex justify-between items-center ${
+                          isSelected 
+                            ? 'border-orange bg-orange/5 text-orange shadow-sm' 
+                            : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {opt}
+                        {isSelected && <Check size={16} />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* GSM SELECTION */}
+              {/* GSM SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
-                  <Droplet className="text-orange" size={18}/> Weight (GSM)
+                  <Droplet className="text-orange" size={18}/> Weight (GSM) <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {gsmOptions.map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setSelections({...selections, gsm: opt})}
-                      className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all ${
-                        selections.gsm === opt 
-                          ? 'border-navy bg-navy text-white shadow-md' 
-                          : 'border-gray-200 text-gray-500 hover:border-navy'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+                  {gsmOptions.map(opt => {
+                    const isSelected = selections.gsm.includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleSelection('gsm', opt)}
+                        className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-center gap-1 ${
+                          isSelected 
+                            ? 'border-navy bg-navy text-white shadow-md' 
+                            : 'border-gray-200 text-gray-500 hover:border-navy'
+                        }`}
+                      >
+                        {opt}
+                        {isSelected && <Check size={14} />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* FIT SELECTION */}
+              {/* FIT SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
-                  <Ruler className="text-orange" size={18}/> Fit Pattern
+                  <Ruler className="text-orange" size={18}/> Fit Pattern <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {fitOptions.map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setSelections({...selections, fit: opt})}
-                      className={`py-4 px-4 rounded-xl border-2 text-sm font-bold text-left transition-all ${
-                        selections.fit === opt 
-                          ? 'border-orange bg-orange/5 text-orange shadow-sm' 
-                          : 'border-gray-200 text-gray-500 hover:border-gray-300'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+                  {fitOptions.map(opt => {
+                    const isSelected = selections.fit.includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleSelection('fit', opt)}
+                        className={`py-4 px-4 rounded-xl border-2 text-sm font-bold text-left transition-all flex justify-between items-center ${
+                          isSelected 
+                            ? 'border-orange bg-orange/5 text-orange shadow-sm' 
+                            : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                        }`}
+                      >
+                        {opt}
+                        {isSelected && <Check size={16} />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* COLOR INPUT (Text Field) */}
+              {/* COLOR INPUT */}
               <div>
                 <label className="text-sm font-extrabold text-navy uppercase tracking-widest mb-4 block">
                   Pantone / Dye Shade
@@ -188,25 +223,29 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* DECORATIONS (Tags) */}
+              {/* DECORATIONS (Multi-select) */}
               <div>
                 <label className="text-sm font-extrabold text-navy uppercase tracking-widest mb-4 block">
                   Additional Decor Options
                 </label>
                 <div className="flex flex-wrap gap-3">
-                  {decorationOptions.map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => toggleDecoration(opt)}
-                      className={`py-2.5 px-5 rounded-lg text-sm font-bold border-2 transition-all ${
-                        selections.decorations.includes(opt) 
-                          ? 'bg-navy text-white border-navy shadow-md' 
-                          : 'bg-white text-gray-500 border-gray-200 hover:border-navy'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+                  {decorationOptions.map(opt => {
+                    const isSelected = selections.decorations.includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleSelection('decorations', opt)}
+                        className={`py-2.5 px-5 rounded-lg text-sm font-bold border-2 transition-all ${
+                          isSelected 
+                            ? 'bg-navy text-white border-navy shadow-md' 
+                            : 'bg-white text-gray-500 border-gray-200 hover:border-navy'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -217,23 +256,28 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               
               {/* Custom Quantity Input */}
               <div className="w-full md:w-auto">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">Target Qty (MOQ: 50)</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">
+                  Target Qty <span className="text-red-500">*</span>
+                </label>
                 <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden h-[60px] bg-white">
                   <button 
-                    onClick={() => updateQuantity(-50)}
+                    type="button"
+                    onClick={() => updateQuantity(-1)}
                     className="w-14 h-full flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-orange transition-colors"
                   >
                     <Minus size={20} />
                   </button>
                   <input 
                     type="number"
-                    value={selections.quantity}
-                    onChange={(e) => setSelections({...selections, quantity: Number(e.target.value)})}
-                    className="w-20 text-center font-extrabold text-xl text-navy focus:outline-none hide-number-arrows"
-                    min="50"
+                    value={selections.quantity === 0 ? '' : selections.quantity}
+                    placeholder="0"
+                    onChange={handleQuantityChange}
+                    className="w-24 text-center font-extrabold text-xl text-navy focus:outline-none hide-number-arrows"
+                    min="0"
                   />
                   <button 
-                    onClick={() => updateQuantity(50)}
+                    type="button"
+                    onClick={() => updateQuantity(1)}
                     className="w-14 h-full flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-orange transition-colors"
                   >
                     <Plus size={20} />
@@ -241,12 +285,18 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button (Form aur Quantity Valid hone par hi active hoga) */}
               <button 
+                type="button"
+                disabled={!isFormValid}
                 onClick={handleAddToQuote}
-                className="w-full flex-1 bg-orange text-white h-[60px] rounded-xl font-extrabold text-lg flex items-center justify-center gap-3 hover:bg-navy transition-all shadow-xl shadow-orange/20 group transform hover:-translate-y-1"
+                className={`w-full flex-1 h-[60px] rounded-xl font-extrabold text-lg flex items-center justify-center gap-3 transition-all ${
+                  isFormValid 
+                    ? 'bg-orange text-white hover:bg-navy shadow-xl shadow-orange/20 cursor-pointer transform hover:-translate-y-1' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                }`}
               >
-                <ShoppingBag size={24} className="group-hover:scale-110 transition-transform" />
+                <ShoppingBag size={24} />
                 ADD TO QUOTE
               </button>
             </div>
