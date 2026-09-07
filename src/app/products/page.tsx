@@ -1,13 +1,32 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '@/lib/products';
 
 export default function ProductsCatalogue() {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL se category read karo, agar URL me nahi ho to 'All' rakho
+  const activeCategory = searchParams.get('category') || 'All';
+
+  // Category change karne par URL update karne ka function
+  const handleCategoryChange = (category: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (category === 'All') {
+      params.delete('category'); // All par query param hata do
+    } else {
+      params.set('category', category); // Specific category URL me set karo
+    }
+
+    // URL update karo bina page refresh kiye
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   const filteredProducts = activeCategory === 'All' 
     ? PRODUCTS 
@@ -67,7 +86,7 @@ export default function ProductsCatalogue() {
             {CATEGORIES.map(category => (
               <button
                 key={category}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${
                   activeCategory === category 
                     ? 'bg-navy text-white shadow-md' 
@@ -86,7 +105,7 @@ export default function ProductsCatalogue() {
             <Link href={`/products/${prod.id}`} key={prod.id} className="group">
               <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-orange/30 transition-all duration-500 flex flex-col h-full transform hover:-translate-y-2">
                 
-                {/* Image Container with Proper Aspect Ratio & No Crop/Over-Zoom */}
+                {/* Image Container */}
                 <div className="h-80 w-full bg-[#f8f9fa] relative p-6 flex items-center justify-center">
                   {prod.badge && (
                     <div className="absolute top-5 left-5 z-20 bg-orange text-white text-[10px] font-extrabold uppercase tracking-widest py-2 px-4 rounded-full shadow-lg">
