@@ -1,30 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '@/lib/products';
 
-export default function ProductsCatalogue() {
+function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // URL se category read karo, agar URL me nahi ho to 'All' rakho
   const activeCategory = searchParams.get('category') || 'All';
 
-  // Category change karne par URL update karne ka function
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams.toString());
     
     if (category === 'All') {
-      params.delete('category'); // All par query param hata do
+      params.delete('category');
     } else {
-      params.set('category', category); // Specific category URL me set karo
+      params.set('category', category);
     }
 
-    // URL update karo bina page refresh kiye
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
@@ -129,7 +126,7 @@ export default function ProductsCatalogue() {
                   </div>
                 </div>
                 
-                <div className="p-8 flex flex-col flex-grow relative bg-white">                  
+                <div className="p-8 flex flex-col flex-grow relative bg-white">                 
                   <h3 className="text-2xl font-extrabold text-navy mb-3 group-hover:text-orange transition-colors">{prod.name}</h3>
                   <p className="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">{prod.desc}</p>
                   
@@ -151,5 +148,13 @@ export default function ProductsCatalogue() {
       </section>
       
     </div>
+  );
+}
+
+export default function ProductsCatalogue() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }
