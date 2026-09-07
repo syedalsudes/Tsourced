@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, ArrowLeft, Plus, Minus, Check, Droplet, Ruler, Scissors, Palette, Sparkles, ShieldCheck, Info } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Plus, Minus, Check, Droplet, Ruler, Scissors, Palette, Sparkles, ShieldCheck, Info } from 'lucide-react';
 import Link from 'next/link';
 import { PRODUCTS } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
@@ -373,7 +373,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                   }`}
               >
-                <ShoppingBag size={24} />
+                <ShoppingCart  size={24} />
                 ADD TO CART
               </button>
             </div>

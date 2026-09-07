@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { 
-  ShoppingBag, 
+  ShoppingCart, 
   ArrowLeft, 
   Trash2, 
   Plus, 
@@ -63,7 +63,7 @@ export default function CartPage() {
 
             <div className="relative z-10">
               <div className="w-24 h-24 bg-orange-50 border border-[#FF5A00]/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#FF5A00] shadow-inner">
-                <ShoppingBag size={44} strokeWidth={1.5} />
+                <ShoppingCart  size={44} strokeWidth={1.5} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#092834] mb-3">
                 Your Quote Cart is Empty

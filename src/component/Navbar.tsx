@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronRight, ShoppingBag } from "lucide-react";
+import { ArrowRight, ChevronRight, ShoppingCart  } from "lucide-react";
 import { PRODUCTS, CATEGORIES } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
 
@@ -234,7 +234,7 @@ export default function Navbar() {
             }`}
             aria-label="View Cart"
           >
-            <ShoppingBag className="w-5 h-5" />
+            <ShoppingCart  className="w-5 h-5" />
 
             {/* Badge Counter */}
             {totalCartCount > 0 && (
