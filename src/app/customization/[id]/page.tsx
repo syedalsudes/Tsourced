@@ -7,13 +7,11 @@ import { PRODUCTS } from '@/lib/customdata';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 
-
-
-
 interface QuoteItem {
   fabric: string[];
   gsm: string[];
   fit: string[];
+  sizes: string[];
   color: string;
   decorations: string[];
   quantity: number;
@@ -25,33 +23,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const { addToCart } = useCart();
   const router = useRouter();
 
-  const handleAddToQuote = () => {
-    if (!isFormValid) return;
-
-    const newItem = {
-      cartItemId: `${product.id}-${Date.now()}`, // Unique ID
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      img: product.img,
-      fabric: selections.fabric,
-      gsm: selections.gsm,
-      fit: selections.fit,
-      color: selections.color,
-      decorations: selections.decorations,
-      quantity: selections.quantity,
-      type: 'custom' as const,
-    };
-
-    addToCart(newItem);
-    router.push('/cart');
-  };
-
-  // Initial state me quantity ko 0 set kiya gaya hai
+  // Initial state me quantity ko 0 aur sizes ko empty set kiya gaya hai
   const [selections, setSelections] = useState<QuoteItem>({
     fabric: [],
     gsm: [],
     fit: [],
+    sizes: [],
     color: '',
     decorations: [],
     quantity: 0
@@ -76,8 +53,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
+  // Ab yahan direct array se sizes aa rahe hain (inStock / cross ki logic remove kar di gayi hai)
+  const availableSizes: { name: string }[] = product.sizes || [
+    { name: 'S' }, { name: 'M' }, { name: 'L' }, { name: 'XL' }, { name: '2XL' }
+  ];
+
   // Generic multi-select toggle helper
-  const toggleSelection = (key: 'fabric' | 'gsm' | 'fit' | 'decorations', value: string) => {
+  const toggleSelection = (key: 'fabric' | 'gsm' | 'fit' | 'decorations' | 'sizes', value: string) => {
     setSelections(prev => {
       const exists = prev[key].includes(value);
       return {
@@ -89,7 +71,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     });
   };
 
-  // Quantity ko 1 se increment / decrement karne ke liye helper function
+  // Quantity ko increment / decrement karne ke liye helper function
   const updateQuantity = (amount: number) => {
     setSelections(prev => ({
       ...prev,
@@ -106,13 +88,36 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     }));
   };
 
-  // Validation: Fabric, GSM, Fit teeno select hon AND Quantity > 0 honi chahiye
+  // Validation: Fabric, GSM, Fit, aur Size chaaro select hon AND Quantity > 0 honi chahiye
   const isFormValid =
     selections.fabric.length > 0 &&
     selections.gsm.length > 0 &&
     selections.fit.length > 0 &&
+    selections.sizes.length > 0 && 
     selections.quantity > 0;
 
+  const handleAddToQuote = () => {
+    if (!isFormValid) return;
+
+    const newItem = {
+      cartItemId: `${product.id}-${Date.now()}`,
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      img: product.img,
+      fabric: selections.fabric,
+      gsm: selections.gsm,
+      fit: selections.fit,
+      sizes: selections.sizes,
+      color: selections.color,
+      decorations: selections.decorations,
+      quantity: selections.quantity,
+      type: 'custom' as const,
+    };
+
+    addToCart(newItem);
+    router.push('/cart');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-24 px-4 sm:px-6 lg:px-8 font-sans text-navy selection:bg-orange selection:text-white">
@@ -150,7 +155,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
             <div className="space-y-10">
 
-              {/* FABRIC SELECTION (Mandatory & Multi-select) */}
+              {/* 1. FABRIC SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
                   <Scissors className="text-orange" size={18} /> Fabric Shell <span className="text-red-500">*</span>
@@ -176,7 +181,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* GSM SELECTION (Mandatory & Multi-select) */}
+              {/* 2. GSM SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
                   <Droplet className="text-orange" size={18} /> Weight (GSM) <span className="text-red-500">*</span>
@@ -202,7 +207,35 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* FIT SELECTION (Mandatory & Multi-select) */}
+              {/* 3. SIZE SELECTION (Mandatory & Multi-select) */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
+                  <Ruler className="text-orange" size={18} /> Size <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
+                  {availableSizes.map(sizeObj => {
+                    const isSelected = selections.sizes.includes(sizeObj.name);
+                    
+                    return (
+                      <button
+                        key={sizeObj.name}
+                        type="button"
+                        onClick={() => toggleSelection('sizes', sizeObj.name)}
+                        className={`py-3 px-2 rounded-xl border-2 text-xs font-bold transition-all flex items-center justify-center gap-1 
+                          ${isSelected 
+                            ? 'border-orange bg-orange/5 text-orange shadow-sm ring-1 ring-orange'
+                            : 'border-gray-200 text-gray-500 hover:border-navy'
+                          }`}
+                      >
+                        {sizeObj.name}
+                        {isSelected && <Check size={14} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. FIT SELECTION (Mandatory & Multi-select) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-extrabold text-navy uppercase tracking-widest mb-4">
                   <Ruler className="text-orange" size={18} /> Fit Pattern <span className="text-red-500">*</span>
@@ -228,7 +261,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* COLOR INPUT */}
+              {/* 5. COLOR INPUT (Optional) */}
               <div>
                 <label className="text-sm font-extrabold text-navy uppercase tracking-widest mb-4 block">
                   Pantone / Dye Shade
@@ -245,7 +278,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* DECORATIONS (Multi-select) */}
+              {/* 6. DECORATIONS (Optional Multi-select) */}
               <div>
                 <label className="text-sm font-extrabold text-navy uppercase tracking-widest mb-4 block">
                   Additional Decor Options
@@ -306,7 +339,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
 
-              {/* Submit Button (Form aur Quantity Valid hone par hi active hoga) */}
+              {/* Submit Button */}
               <button
                 type="button"
                 disabled={!isFormValid}
@@ -316,7 +349,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                   }`}
               >
-                <ShoppingCart  size={24} />
+                <ShoppingCart size={24} />
                 ADD TO QUOTE
               </button>
             </div>

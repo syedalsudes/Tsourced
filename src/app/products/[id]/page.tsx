@@ -7,13 +7,12 @@ import { PRODUCTS } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 
-
-
 interface ProductSelections {
   fabric: string[];
   weight: string[];
   fit: string[];
   colors: string[];
+  sizes: string[]; // <-- Naya add kiya gaya
   additionalOptions: string[];
   quantity: number;
 }
@@ -26,6 +25,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
     weight: [],
     fit: [],
     colors: [],
+    sizes: [], // <-- Naya add kiya gaya
     additionalOptions: [],
     quantity: 0
   });
@@ -47,6 +47,15 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
   const availableFabrics: string[] = product.fabrics || ['100% Organic Cotton', 'Polyester Blend', 'Heavyweight Fleece'];
   const availableWeights: string[] = product.weights || ['240 GSM', '300 GSM', '360 GSM'];
   const availableFits: string[] = product.fits || ['Regular Fit', 'Oversized Fit', 'Relaxed Fit'];
+  
+  // Sizes Setup with Availability
+  const availableSizes: { name: string; inStock: boolean }[] = product.sizes || [
+    { name: 'S', inStock: true },
+    { name: 'M', inStock: true },
+    { name: 'L', inStock: false }, // Default fallback: L is disabled
+    { name: 'XL', inStock: true }
+  ];
+
   const availableColors: { name: string; hex: string }[] = product.colors || [
     { name: 'Onyx Black', hex: '#111827' },
     { name: 'Pure White', hex: '#FFFFFF' },
@@ -86,12 +95,13 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
     }));
   };
 
-  // Requirement: Saari 5 categories me kam se kam ek choice multiple selected ho AND quantity > 0 ho
+  // Requirement: Saari categories (including SIZE) me kam se kam ek choice multiple selected ho AND quantity > 0 ho
   const isFormValid =
     selections.fabric.length > 0 &&
     selections.weight.length > 0 &&
     selections.fit.length > 0 &&
     selections.colors.length > 0 &&
+    selections.sizes.length > 0 && // <-- Mandatory Size Check
     selections.additionalOptions.length > 0 &&
     selections.quantity > 0;
 
@@ -112,6 +122,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
       weight: selections.weight,
       fit: selections.fit,
       colors: selections.colors,
+      sizes: selections.sizes, // <-- Add sizes to cart item
       additionalOptions: selections.additionalOptions,
       quantity: selections.quantity,
       type: 'standard' as const,
@@ -188,7 +199,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
 
             <div className="space-y-8">
 
-              {/* 1. FABRIC SELECTION (Required Multi-select) */}
+              {/* 1. FABRIC SELECTION */}
               <div>
                 <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
                   <span className="flex items-center gap-2"><Scissors className="text-orange" size={18} /> Fabric Material <span className="text-red-500">*</span></span>
@@ -215,7 +226,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                 </div>
               </div>
 
-              {/* 2. WEIGHT / GSM SELECTION (Required Multi-select) */}
+              {/* 2. WEIGHT / GSM SELECTION */}
               <div>
                 <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
                   <span className="flex items-center gap-2"><Droplet className="text-orange" size={18} /> Fabric Weight <span className="text-red-500">*</span></span>
@@ -242,7 +253,47 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                 </div>
               </div>
 
-              {/* 3. FIT PATTERN SELECTION (Required Multi-select) */}
+             {/* 3. SIZE SELECTION */}
+<div>
+  <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
+    <span className="flex items-center gap-2"><Ruler className="text-orange" size={18} /> Size <span className="text-red-500">*</span></span>
+    <span className="text-xs font-normal text-gray-400 uppercase">Select One or More</span>
+  </label>
+  <div className="grid grid-cols-4 gap-3">
+    {availableSizes.map(sizeObj => {
+      const isSelected = selections.sizes.includes(sizeObj.name);
+      const isAvailable = sizeObj.inStock;
+      
+      return (
+        <button
+          key={sizeObj.name}
+          type="button"
+          disabled={!isAvailable}
+          onClick={() => toggleSelection('sizes', sizeObj.name)}
+          className={`relative overflow-hidden py-3 px-2 rounded-xl border-2 text-xs font-bold transition-all flex items-center justify-center gap-1 
+            ${!isAvailable 
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed select-none' 
+              : isSelected
+                ? 'border-orange bg-orange/5 text-orange shadow-sm ring-1 ring-orange'
+                : 'border-gray-200 text-gray-600 hover:border-navy'
+            }`}
+        >
+          {/* Poore Box par Cross Line */}
+          {!isAvailable && (
+            <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {/* Option A: Diagonal Slash (Kone se kone tak cut - zyada behtar lagti hai) */}
+              <span className="w-[140%] h-[1.5px] bg-gray-400 rotate-[-25deg] transform origin-center" />
+            </span>
+          )}
+
+          <span className="relative z-10">{sizeObj.name}</span>
+          {isSelected && isAvailable && <Check size={14} className="relative z-10" />}
+        </button>
+      );
+    })}
+  </div>
+</div>
+              {/* 4. FIT PATTERN SELECTION */}
               <div>
                 <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
                   <span className="flex items-center gap-2"><Ruler className="text-orange" size={18} /> Fit Pattern <span className="text-red-500">*</span></span>
@@ -269,7 +320,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                 </div>
               </div>
 
-              {/* 4. COLOR SELECTION (Circle Colors - Required Multi-select) */}
+              {/* 5. COLOR SELECTION */}
               <div>
                 <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
                   <span className="flex items-center gap-2"><Palette className="text-orange" size={18} /> Available Colors <span className="text-red-500">*</span></span>
@@ -300,7 +351,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                 </div>
               </div>
 
-              {/* 5. ADDITIONAL OPTIONS (Required Multi-select) */}
+              {/* 6. ADDITIONAL OPTIONS */}
               <div>
                 <label className="flex items-center justify-between text-sm font-extrabold text-navy uppercase tracking-widest mb-3">
                   <span className="flex items-center gap-2"><Sparkles className="text-orange" size={18} /> Packaging & Finishing <span className="text-red-500">*</span></span>
@@ -363,7 +414,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                 </div>
               </div>
 
-              {/* Submit Button (All 5 mandatory fields + Qty > 0 check) */}
+              {/* Submit Button (All mandatory fields + Qty > 0 check) */}
               <button
                 type="button"
                 disabled={!isFormValid}
@@ -373,7 +424,7 @@ export default function StandardProductDetailPage({ params }: { params: { id: st
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                   }`}
               >
-                <ShoppingCart  size={24} />
+                <ShoppingCart size={24} />
                 ADD TO CART
               </button>
             </div>

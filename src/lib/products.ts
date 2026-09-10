@@ -3,23 +3,30 @@ export interface ProductColor {
   hex: string;
 }
 
+// Naya interface sizes aur unki availability ke liye
+export interface ProductSize {
+  name: string;
+  inStock: boolean;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: 'Hoodies' | 'Crewneck' | 'Zipper Hoodies' | 'Youth' | 'Bottoms' | 'T-Shirts';
   badge?: string;
   desc: string;
-  img: string; // Aap apni image ka path baad me yahan change kar sakte hain
+  img: string;
   extraNotes: string;
   highlights: string[];
   fabrics: string[];
   weights: string[];
   fits: string[];
   colors: ProductColor[];
+  sizes: ProductSize[]; // Naya property add kiya gaya hai
   additionalOpts: string[];
 }
 
-// 1. Categories List (Sub-menus, Navbars aur Filters me use karne ke liye)
+// 1. Categories List
 export const CATEGORIES = [
   'All',
   'Hoodies',
@@ -51,6 +58,12 @@ export const PRODUCTS: Product[] = [
       { name: 'Bone White', hex: '#F3F4F6' },
       { name: 'Vintage Brown', hex: '#4A3B32' }
     ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: false }, // Ye UI me disabled/cross hoga
+      { name: 'XL', inStock: true }
+    ],
     additionalOpts: ['Custom Neck Label', 'Polybag Packaging', 'Custom Drawstrings', 'Puff Print Ready']
   },
   {
@@ -69,6 +82,13 @@ export const PRODUCTS: Product[] = [
       { name: 'Onyx Black', hex: '#111827' },
       { name: 'Navy Blue', hex: '#1E3A8A' },
       { name: 'Forest Green', hex: '#064E3B' }
+    ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: false }, // Ye UI me disabled/cross hoga
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: true },
+      { name: 'XXL', inStock: false }
     ],
     additionalOpts: ['Custom Neck Label', 'Hangtag Included', 'Polybag Packaging']
   },
@@ -92,6 +112,11 @@ export const PRODUCTS: Product[] = [
       { name: 'Sage Green', hex: '#87A96B' },
       { name: 'Heather Grey', hex: '#9CA3AF' }
     ],
+    sizes: [
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: true }
+    ],
     additionalOpts: ['Custom Neck Label', 'Embroidery Patch', 'Polybag Packaging']
   },
   {
@@ -110,6 +135,12 @@ export const PRODUCTS: Product[] = [
       { name: 'Washed Charcoal', hex: '#374151' },
       { name: 'Washed Navy', hex: '#1E293B' },
       { name: 'Dusty Rose', hex: '#D8B4FE' }
+    ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: false },
+      { name: 'XL', inStock: false }
     ],
     additionalOpts: ['Custom Neck Label', 'Distressed Edges', 'Hangtag Included']
   },
@@ -132,6 +163,12 @@ export const PRODUCTS: Product[] = [
       { name: 'Heather Grey', hex: '#9CA3AF' },
       { name: 'Midnight Navy', hex: '#0F172A' }
     ],
+    sizes: [
+      { name: 'S', inStock: false },
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: true }
+    ],
     additionalOpts: ['Custom Puller', 'Custom Neck Label', 'Individual Polybag']
   },
   {
@@ -150,6 +187,11 @@ export const PRODUCTS: Product[] = [
       { name: 'Onyx Black', hex: '#111827' },
       { name: 'Charcoal', hex: '#4B5563' },
       { name: 'Electric Blue', hex: '#2563EB' }
+    ],
+    sizes: [
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: false }
     ],
     additionalOpts: ['Reflective Prints', 'Custom Neck Label', 'Polybag Packaging']
   },
@@ -173,6 +215,11 @@ export const PRODUCTS: Product[] = [
       { name: 'Sky Blue', hex: '#38BDF8' },
       { name: 'Soft Pink', hex: '#F472B6' }
     ],
+    sizes: [
+      { name: 'Youth S', inStock: true },
+      { name: 'Youth M', inStock: true },
+      { name: 'Youth L', inStock: false }
+    ],
     additionalOpts: ['Safety Neck Labels', 'Custom Prints', 'Polybag Packaging']
   },
   {
@@ -191,6 +238,11 @@ export const PRODUCTS: Product[] = [
       { name: 'Pure White', hex: '#FFFFFF' },
       { name: 'Onyx Black', hex: '#111827' },
       { name: 'Bright Yellow', hex: '#FACC15' }
+    ],
+    sizes: [
+      { name: 'Youth S', inStock: false },
+      { name: 'Youth M', inStock: true },
+      { name: 'Youth L', inStock: true }
     ],
     additionalOpts: ['Tear-Away Labels', 'Screen Printing', 'Polybag Packaging']
   },
@@ -213,6 +265,12 @@ export const PRODUCTS: Product[] = [
       { name: 'Heather Grey', hex: '#9CA3AF' },
       { name: 'Olive Green', hex: '#3F6212' }
     ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: false }
+    ],
     additionalOpts: ['Custom Eyelets', 'Custom Neck/Waist Label', 'Polybag Packaging']
   },
   {
@@ -231,6 +289,13 @@ export const PRODUCTS: Product[] = [
       { name: 'Onyx Black', hex: '#111827' },
       { name: 'Bone White', hex: '#F3F4F6' },
       { name: 'Washed Charcoal', hex: '#374151' }
+    ],
+    sizes: [
+      { name: '28', inStock: false },
+      { name: '30', inStock: true },
+      { name: '32', inStock: true },
+      { name: '34', inStock: true },
+      { name: '36', inStock: false }
     ],
     additionalOpts: ['Custom Waistband Printing', 'Custom Labels', 'Polybag Packaging']
   },
@@ -254,6 +319,12 @@ export const PRODUCTS: Product[] = [
       { name: 'Vintage Washed Grey', hex: '#4B5563' },
       { name: 'Rust Orange', hex: '#EA580C' }
     ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: false }, // Disabled
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: true }
+    ],
     additionalOpts: ['Custom Neck Print', 'Custom Hem Tag', 'Polybag Packaging']
   },
   {
@@ -273,16 +344,21 @@ export const PRODUCTS: Product[] = [
       { name: 'Onyx Black', hex: '#111827' },
       { name: 'Navy Blue', hex: '#1E3A8A' }
     ],
+    sizes: [
+      { name: 'S', inStock: true },
+      { name: 'M', inStock: true },
+      { name: 'L', inStock: true },
+      { name: 'XL', inStock: false } // Disabled
+    ],
     additionalOpts: ['Custom Neck Tag', 'Polybag Packaging', 'Hangtag Included']
   }
 ];
 
-// Helper Function: ID ke zariye single product search karne ke liye
+// Helper Functions
 export function getProductById(id: string): Product | undefined {
   return PRODUCTS.find(p => p.id === id);
 }
 
-// Helper Function: Category ke zariye products list filter karne ke liye
 export function getProductsByCategory(category: string): Product[] {
   if (category === 'All') return PRODUCTS;
   return PRODUCTS.filter(p => p.category === category);

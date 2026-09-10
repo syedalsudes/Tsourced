@@ -216,9 +216,6 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-[#FF5A00] transition-colors duration-200">
             About
           </Link>
-          <Link href="/contact" className="hover:text-[#FF5A00] transition-colors duration-200">
-            Contact
-          </Link>
         </nav>
 
         {/* Action Buttons (Cart + Quote) */}
@@ -250,7 +247,7 @@ export default function Navbar() {
               href="/contact"
               className="bg-[#FF5A00] hover:bg-[#e04f00] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out shadow-md shadow-[#FF5A00]/25 hover:-translate-y-0.5"
             >
-              Get a Quote
+              Request a Quote
             </Link>
           </div>
 
@@ -312,16 +309,12 @@ export default function Navbar() {
           <Link href="/quality" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
             Quality
           </Link>
-          <Link href="/contact" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            Contact
-          </Link>
-
           <div className="pt-2">
             <Link
               href="/contact"
               className="block text-center w-full bg-[#FF5A00] hover:bg-[#e04f00] text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-[#FF5A00]/25"
             >
-              Get a Quote
+              Request a Quote
             </Link>
           </div>
         </div>

@@ -3,22 +3,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface CartItem {
-  cartItemId: string; // Unique ID for each added item variant
+  cartItemId: string;
   id: string;
   name: string;
   category: string;
   img: string;
   quantity: number;
-  // Specific selections
   fabric?: string[];
   gsm?: string[];
   weight?: string[];
   fit?: string[];
   color?: string;
   colors?: string[];
+  sizes?: string[]; 
   decorations?: string[];
   additionalOptions?: string[];
-  type: 'custom' | 'standard';
+  type: 'standard' | 'custom';
 }
 
 interface CartContextType {

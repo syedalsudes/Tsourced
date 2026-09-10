@@ -3,16 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { 
-  ShoppingCart, 
-  ArrowLeft, 
-  Trash2, 
-  Plus, 
-  Minus, 
-  Send, 
-  CheckCircle2, 
-  Clock, 
-  ShieldCheck, 
+import {
+  ShoppingCart,
+  ArrowLeft,
+  Trash2,
+  Plus,
+  Minus,
+  Send,
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
   Package,
   Layers,
   Sparkles
@@ -35,7 +35,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pt-28 pb-24 px-4 sm:px-6 lg:px-8 font-sans text-[#092834]">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-6 border-b border-gray-200/80 gap-4">
           <div>
@@ -63,7 +63,7 @@ export default function CartPage() {
 
             <div className="relative z-10">
               <div className="w-24 h-24 bg-orange-50 border border-[#FF5A00]/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#FF5A00] shadow-inner">
-                <ShoppingCart  size={44} strokeWidth={1.5} />
+                <ShoppingCart size={44} strokeWidth={1.5} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#092834] mb-3">
                 Your Quote Cart is Empty
@@ -97,7 +97,7 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {/* ITEMS LIST (Left Column) */}
             <div className="lg:col-span-2 space-y-5">
               {cart.map((item) => (
@@ -106,8 +106,8 @@ export default function CartPage() {
                   className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col sm:flex-row gap-5 relative group"
                 >
                   {/* Image */}
-                  <div 
-                    className="w-full sm:w-36 h-44 rounded-xl bg-[#F1F5F9] bg-cover bg-center shrink-0 border border-gray-200/60 overflow-hidden relative" 
+                  <div
+                    className="w-full sm:w-36 h-44 rounded-xl bg-[#F1F5F9] bg-cover bg-center shrink-0 border border-gray-200/60 overflow-hidden relative"
                     style={{ backgroundImage: `url(${item.img})` }}
                   >
                     <span className="absolute top-2 left-2 bg-[#092834]/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
@@ -136,7 +136,7 @@ export default function CartPage() {
 
                       {/* Selected Attributes Badge List */}
                       <div className="mt-3 space-y-2 text-xs">
-                        
+
                         {/* Fabrics */}
                         {item.fabric && item.fabric.length > 0 && (
                           <div className="flex flex-wrap items-center gap-1.5">
@@ -168,6 +168,18 @@ export default function CartPage() {
                             {item.fit.map((ft, i) => (
                               <span key={i} className="bg-gray-100 text-[#092834] font-semibold px-2.5 py-0.5 rounded-md border border-gray-200/80">
                                 {ft}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* SIZES - (Naya Block Add Kiya Gaya Hai) */}
+                        {item.sizes && item.sizes.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="font-semibold text-gray-400">Sizes:</span>
+                            {item.sizes.map((s: string, i: number) => (
+                              <span key={i} className="bg-purple-50 text-purple-700 font-semibold px-2.5 py-0.5 rounded-md border border-purple-200/80">
+                                {s}
                               </span>
                             ))}
                           </div>
@@ -261,7 +273,7 @@ export default function CartPage() {
             {/* SUMMARY & SUBMIT QUOTE (Right Column) */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-3xl p-6 lg:p-7 border border-gray-200/80 shadow-xl sticky top-28">
-                
+
                 {/* Title */}
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
                   <h3 className="text-xl font-extrabold text-[#092834]">
@@ -313,13 +325,12 @@ export default function CartPage() {
                   </p>
                 </div>
 
-                {/* CTA Button */}
-                <button
-                  onClick={() => alert('Quote Request Submitted Successfully! Our team will contact you shortly.')}
-                  className="w-full py-4 bg-[#FF5A00] hover:bg-[#e04f00] text-white font-extrabold rounded-xl transition-all shadow-xl shadow-[#FF5A00]/25 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base cursor-pointer"
-                >
-                  <Send size={18} /> Request Formal Quote
-                </button>
+                <Link
+  href="/checkout"
+  className="w-full py-4 bg-[#FF5A00] hover:bg-[#e04f00] text-white font-extrabold rounded-xl transition-all shadow-xl shadow-[#FF5A00]/25 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base"
+>
+  <Send size={18} /> Proceed to Checkout
+</Link>
 
                 <p className="text-[11px] text-gray-400 text-center mt-3">
                   No payment required at this stage.
