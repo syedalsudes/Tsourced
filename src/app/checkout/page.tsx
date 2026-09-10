@@ -157,12 +157,14 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="sm:col-span-2 space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Corporate Email Address *</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Email Address *</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <Mail size={16} className="text-gray-400" />
                       </div>
-                      <input required type="email" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="alex.morgan@company.com" />
+                      <input required type="email" name="email" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                        placeholder="e.g. alex@gmail.com"
+                       />
                     </div>
                   </div>
                 </div>
@@ -178,12 +180,12 @@ export default function CheckoutPage() {
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Company / Brand Name *</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Company / Brand Name (Optional)</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <Building2 size={16} className="text-gray-400" />
                     </div>
-                    <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. Acme Apparel Group" />
+                    <input type="text" name="company" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. Acme Apparel Group" />
                   </div>
                 </div>
               </div>

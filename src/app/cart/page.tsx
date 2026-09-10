@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   Package,
   Layers,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
 export default function CartPage() {
@@ -326,15 +327,12 @@ export default function CartPage() {
                 </div>
 
                 <Link
-  href="/checkout"
-  className="w-full py-4 bg-[#FF5A00] hover:bg-[#e04f00] text-white font-extrabold rounded-xl transition-all shadow-xl shadow-[#FF5A00]/25 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base"
->
-  <Send size={18} /> Proceed to Checkout
-</Link>
-
-                <p className="text-[11px] text-gray-400 text-center mt-3">
-                  No payment required at this stage.
-                </p>
+                  href="/checkout"
+                  className="w-full py-4 bg-[#FF5A00] hover:bg-[#092834] text-white font-extrabold rounded-xl transition-all duration-300 shadow-xl shadow-[#FF5A00]/20 hover:shadow-2xl hover:shadow-[#092834]/20 hover:-translate-y-1 flex items-center justify-center gap-3 text-lg group"
+                >
+                  Finalize Quote
+                  <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
+                </Link>
 
               </div>
             </div>

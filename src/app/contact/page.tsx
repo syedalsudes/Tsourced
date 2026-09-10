@@ -11,7 +11,8 @@ import {
     PenTool,
     Factory,
     Clock,
-    ShieldCheck
+    ShieldCheck,
+    MessageSquare // Naya icon import kiya hai
 } from 'lucide-react';
 
 // Replace with your actual products import
@@ -27,7 +28,8 @@ export default function RequestQuotePage() {
         product: '',
         quantity: '',
         timeframe: '',
-        projectDetails: ''
+        projectDetails: '',
+        additionalMessage: '' // Nayi state field add ki hai
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -159,10 +161,12 @@ export default function RequestQuotePage() {
                                         </div>
                                     </div>
                                     <div className="sm:col-span-2 space-y-1.5">
-                                        <label className="block text-xs font-bold text-gray-500">Company / Brand Name *</label>
+                                        <label className="block text-xs font-bold text-gray-500">
+                                            Company / Brand Name <span className="font-normal text-gray-400">(Optional)</span>
+                                        </label>
                                         <div className="relative">
                                             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none"><Building2 size={16} className="text-gray-400" /></div>
-                                            <input required type="text" name="company" placeholder="e.g. Acme Apparel Group" value={formData.company} onChange={handleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all font-medium" />
+                                            <input type="text" name="company" placeholder="e.g. Acme Apparel Group" value={formData.company} onChange={handleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all font-medium" />
                                         </div>
                                     </div>
                                 </div>
@@ -200,9 +204,10 @@ export default function RequestQuotePage() {
                                             <input required type="number" min="50" name="quantity" placeholder="Min. 50 pieces" value={formData.quantity} onChange={handleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all font-medium" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="block text-xs font-bold text-gray-500">Expected Timeline *</label>
+                                            <label className="block text-xs font-bold text-gray-500">
+                                                Expected Timeline <span className="font-normal text-gray-400">(Optional)</span>
+                                            </label>
                                             <select
-                                                required
                                                 name="timeframe"
                                                 value={formData.timeframe}
                                                 onChange={handleChange}
@@ -218,14 +223,31 @@ export default function RequestQuotePage() {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold text-gray-500">Project Details & Customizations *</label>
+                                        <label className="block text-xs font-bold text-gray-500">
+                                            Project Details & Customizations <span className="font-normal text-gray-400">(Optional)</span>
+                                        </label>
                                         <textarea
-                                            required
                                             name="projectDetails"
                                             value={formData.projectDetails}
                                             onChange={handleChange}
-                                            rows={5}
+                                            rows={4}
                                             placeholder="Please specify fabric choices, GSM, required sizes, colors, and any printing/embroidery details..."
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all resize-none custom-scrollbar font-medium"
+                                        />
+                                    </div>
+
+                                    {/* Naya Optional Message Field */}
+                                    <div className="space-y-1.5 pt-2">
+                                        <label className="block text-xs font-bold text-gray-500 flex items-center gap-1.5">
+                                            <MessageSquare size={14} className="text-gray-400" />
+                                            Additional Message / Note <span className="font-normal text-gray-400">(Optional)</span>
+                                        </label>
+                                        <textarea
+                                            name="additionalMessage"
+                                            value={formData.additionalMessage}
+                                            onChange={handleChange}
+                                            rows={2}
+                                            placeholder="Any other message, questions, or notes for our team..."
                                             className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all resize-none custom-scrollbar font-medium"
                                         />
                                     </div>
