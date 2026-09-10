@@ -12,11 +12,9 @@ import {
     Factory,
     Clock,
     ShieldCheck,
-    MessageSquare // Naya icon import kiya hai
 } from 'lucide-react';
-
-// Replace with your actual products import
 import { PRODUCTS } from '@/lib/customdata';
+
 
 export default function RequestQuotePage() {
     const [formData, setFormData] = useState({
@@ -29,7 +27,6 @@ export default function RequestQuotePage() {
         quantity: '',
         timeframe: '',
         projectDetails: '',
-        additionalMessage: '' // Nayi state field add ki hai
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -235,23 +232,6 @@ export default function RequestQuotePage() {
                                             className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all resize-none custom-scrollbar font-medium"
                                         />
                                     </div>
-
-                                    {/* Naya Optional Message Field */}
-                                    <div className="space-y-1.5 pt-2">
-                                        <label className="block text-xs font-bold text-gray-500 flex items-center gap-1.5">
-                                            <MessageSquare size={14} className="text-gray-400" />
-                                            Additional Message / Note <span className="font-normal text-gray-400">(Optional)</span>
-                                        </label>
-                                        <textarea
-                                            name="additionalMessage"
-                                            value={formData.additionalMessage}
-                                            onChange={handleChange}
-                                            rows={2}
-                                            placeholder="Any other message, questions, or notes for our team..."
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] transition-all resize-none custom-scrollbar font-medium"
-                                        />
-                                    </div>
-
                                 </div>
                             </div>
 

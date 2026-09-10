@@ -17,7 +17,8 @@ import {
   Globe2,
   Map,
   Building,
-  CheckCircle2
+  CheckCircle2,
+  MessageSquare // Naya icon import kiya gaya hai
 } from 'lucide-react';
 
 // Country Data mapping with States and Phone formatting rules
@@ -42,7 +43,8 @@ export default function CheckoutPage() {
     country: 'US',
     province: '',
     city: '',
-    phone: ''
+    phone: '',
+    additionalMessage: '' // Nayi state field add ki hai
   });
 
   // Redirect to cart if empty
@@ -142,7 +144,14 @@ export default function CheckoutPage() {
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <UserCircle size={16} className="text-gray-400" />
                       </div>
-                      <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. Alex" />
+                      <input 
+                        required 
+                        type="text" 
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                        placeholder="e.g. Alex" 
+                      />
                     </div>
                   </div>
                   
@@ -152,7 +161,14 @@ export default function CheckoutPage() {
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <UserCircle size={16} className="text-gray-400" />
                       </div>
-                      <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. Morgan" />
+                      <input 
+                        required 
+                        type="text" 
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                        placeholder="e.g. Morgan" 
+                      />
                     </div>
                   </div>
 
@@ -162,7 +178,13 @@ export default function CheckoutPage() {
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <Mail size={16} className="text-gray-400" />
                       </div>
-                      <input required type="email" name="email" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                      <input 
+                        required 
+                        type="email" 
+                        name="email" 
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
                         placeholder="e.g. alex@gmail.com"
                        />
                     </div>
@@ -180,17 +202,24 @@ export default function CheckoutPage() {
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Company / Brand Name (Optional)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Company / Brand Name <span className="font-normal text-gray-400">(Optional)</span></label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <Building2 size={16} className="text-gray-400" />
                     </div>
-                    <input type="text" name="company" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. Acme Apparel Group" />
+                    <input 
+                      type="text" 
+                      name="company" 
+                      value={formData.company}
+                      onChange={(e) => setFormData({...formData, company: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                      placeholder="e.g. Acme Apparel Group" 
+                    />
                   </div>
                 </div>
               </div>
 
-              {/* 3. Location & Phone */}
+              {/* 3. Location & Communication */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
                   <div className="p-2 bg-orange-50 rounded-lg text-[#FF5A00]">
@@ -248,7 +277,14 @@ export default function CheckoutPage() {
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <Building size={16} className="text-gray-400" />
                       </div>
-                      <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" placeholder="e.g. New York City" />
+                      <input 
+                        required 
+                        type="text" 
+                        value={formData.city}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
+                        placeholder="e.g. New York City" 
+                      />
                     </div>
                   </div>
 
@@ -269,7 +305,22 @@ export default function CheckoutPage() {
                         className="w-full bg-gray-50 border border-gray-200 rounded-r-xl px-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all" 
                       />
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-1">We will use this number to contact you regarding your order requirements.</p>
+                  </div>
+
+                  {/* Naya Optional Text Area for Additional Messages */}
+                  <div className="sm:col-span-2 space-y-1.5 pt-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-1.5">
+                      <MessageSquare size={14} className="text-gray-400" />
+                      Additional Message / Notes <span className="font-normal text-gray-400 lowercase">(Optional)</span>
+                    </label>
+                    <textarea 
+                      name="additionalMessage"
+                      value={formData.additionalMessage}
+                      onChange={(e) => setFormData({...formData, additionalMessage: e.target.value})}
+                      rows={4}
+                      placeholder="Share any specific requirements, deadlines, or questions you have for our team..."
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all resize-none custom-scrollbar"
+                    ></textarea>
                   </div>
 
                 </div>
@@ -284,10 +335,6 @@ export default function CheckoutPage() {
                   Submit Quote Request <Send size={20} className="transform group-hover:translate-x-1 transition-transform" />
                 </button>
                 
-                <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-500 font-medium bg-gray-50 py-2.5 rounded-lg border border-gray-100">
-                  <CheckCircle2 size={14} className="text-emerald-500" />
-                  No upfront payment required. This is purely a B2B inquiry.
-                </div>
               </div>
 
             </form>
