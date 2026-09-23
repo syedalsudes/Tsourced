@@ -3,12 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronRight, ShoppingCart  } from "lucide-react";
+import { ArrowRight, ChevronRight, ShoppingCart } from "lucide-react";
 import { PRODUCTS, CATEGORIES } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
 
 // Filter out 'All' for Navbar sub-menu
 const NAV_CATEGORIES = CATEGORIES.filter((cat) => cat !== "All");
+
+// Centralized Navigation Links Array
+const NAV_LINKS = [
+  { name: 'Products', href: '/products' },
+  { name: 'Customization', href: '/customization' },
+  { name: 'How It Works', href: '/howitwork' },
+  { name: 'Quality', href: '/quality' },
+  { name: 'About', href: '/about' },
+];
 
 export default function Navbar() {
   const { cart } = useCart();
@@ -70,157 +79,162 @@ export default function Navbar() {
             isSolidTheme ? "text-[#092834]" : "text-white"
           }`}
         >
-          {/* Products Mega Menu Trigger */}
-          <div
-            className="h-20 flex items-center"
-            onMouseEnter={() => setIsDropdownOpen(true)}
-            onMouseLeave={() => setIsDropdownOpen(false)}
-          >
-            <button
-              className="flex items-center gap-1.5 hover:text-[#FF5A00] transition-colors duration-200 focus:outline-none py-2 cursor-pointer"
-              aria-expanded={isDropdownOpen}
-            >
-              <Link href="/products" className="hover:text-[#FF5A00] transition-colors duration-200">
-                <span>Products</span>
-              </Link>
-              <svg
-                className={`w-4 h-4 transition-transform duration-300 ease-out ${
-                  isDropdownOpen
-                    ? "rotate-180 text-[#FF5A00]"
-                    : isSolidTheme
-                    ? "text-[#092834]/60"
-                    : "text-white/70"
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+          {NAV_LINKS.map((link) => {
+            // Agar link 'Products' hai to Mega Menu dikhana hai
+            if (link.name === 'Products') {
+              return (
+                <div
+                  key={link.href}
+                  className="h-20 flex items-center"
+                  onMouseEnter={() => setIsDropdownOpen(true)}
+                  onMouseLeave={() => setIsDropdownOpen(false)}
+                >
+                  <button
+                    className="flex items-center gap-1.5 hover:text-[#FF5A00] transition-colors duration-200 focus:outline-none py-2 cursor-pointer"
+                    aria-expanded={isDropdownOpen}
+                  >
+                    <Link href={link.href} className="hover:text-[#FF5A00] transition-colors duration-200">
+                      <span>{link.name}</span>
+                    </Link>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                        isDropdownOpen
+                          ? "rotate-180 text-[#FF5A00]"
+                          : isSolidTheme
+                          ? "text-[#092834]/60"
+                          : "text-white/70"
+                      }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-            {/* Pure White Mega Menu Box */}
-            <div
-              className={`fixed top-20 left-0 w-screen bg-white text-[#092834] border-b border-t border-gray-200 shadow-2xl transition-all duration-300 ease-out origin-top ${
-                isDropdownOpen
-                  ? "opacity-100 visible translate-y-0 pointer-events-auto"
-                  : "opacity-0 invisible -translate-y-2 pointer-events-none"
-              }`}
-            >
-              <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
-                <div className="grid grid-cols-12 gap-8 items-start">
-                  {/* Left: Garment Categories List */}
-                  <div className="col-span-4 border-r border-gray-200 pr-6 space-y-1">
-                    <span className="text-gray-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-3 block">
-                      Garment Categories
-                    </span>
-
-                    <div className="space-y-1">
-                      {NAV_CATEGORIES.map((category) => {
-                        const isActive = activeCategory === category;
-                        return (
-                          <div
-                            key={category}
-                            onMouseEnter={() => setActiveCategory(category)}
-                            className={`flex items-center justify-between px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-out ${
-                              isActive
-                                ? "bg-[#FF5A00] text-white font-bold shadow-md shadow-[#FF5A00]/20"
-                                : "text-[#092834] hover:text-[#FF5A00] hover:bg-gray-50 font-medium"
-                            }`}
-                          >
-                            <Link href={`/products?category=${category}`} className="text-sm w-full block">
-                              {category}
-                            </Link>
-                            <ChevronRight
-                              className={`w-4 h-4 transition-all duration-200 ease-out ${
-                                isActive ? "opacity-100 translate-x-1" : "opacity-0"
-                              }`}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Right: Dynamic Product Preview Cards */}
-                  <div className="col-span-8 flex flex-col justify-between h-full">
-                    <div>
-                      <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
-                        <div>
-                          <span className="text-[#FF5A00] text-xs font-bold uppercase tracking-wider block mb-0.5">
-                            Category Preview
+                  {/* Pure White Mega Menu Box */}
+                  <div
+                    className={`fixed top-20 left-0 w-screen bg-white text-[#092834] border-b border-t border-gray-200 shadow-2xl transition-all duration-300 ease-out origin-top ${
+                      isDropdownOpen
+                        ? "opacity-100 visible translate-y-0 pointer-events-auto"
+                        : "opacity-0 invisible -translate-y-2 pointer-events-none"
+                    }`}
+                  >
+                    <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
+                      <div className="grid grid-cols-12 gap-8 items-start">
+                        {/* Left: Garment Categories List */}
+                        <div className="col-span-4 border-r border-gray-200 pr-6 space-y-1">
+                          <span className="text-gray-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-3 block">
+                            Garment Categories
                           </span>
-                          <h3 className="text-xl font-extrabold text-[#092834]">
-                            {activeCategory} Essentials
-                          </h3>
+
+                          <div className="space-y-1">
+                            {NAV_CATEGORIES.map((category) => {
+                              const isActive = activeCategory === category;
+                              return (
+                                <div
+                                  key={category}
+                                  onMouseEnter={() => setActiveCategory(category)}
+                                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-out ${
+                                    isActive
+                                      ? "bg-[#FF5A00] text-white font-bold shadow-md shadow-[#FF5A00]/20"
+                                      : "text-[#092834] hover:text-[#FF5A00] hover:bg-gray-50 font-medium"
+                                  }`}
+                                >
+                                  <Link href={`/products?category=${category}`} className="text-sm w-full block">
+                                    {category}
+                                  </Link>
+                                  <ChevronRight
+                                    className={`w-4 h-4 transition-all duration-200 ease-out ${
+                                      isActive ? "opacity-100 translate-x-1" : "opacity-0"
+                                    }`}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
 
-                        <Link
-                          href={`/products?category=${activeCategory}`}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FF5A00] hover:text-[#e04f00] transition-colors duration-200"
-                        >
-                          <span>Explore All {activeCategory}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                      </div>
-
-                      {/* Product Preview Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {activeProducts.map((prod) => (
-                          <Link
-                            key={prod.id}
-                            href={`/products/${prod.id}`}
-                            className="group bg-[#f8f9fa] hover:bg-white rounded-2xl p-4 border border-gray-200/80 hover:border-[#FF5A00]/40 shadow-xs hover:shadow-lg transition-all duration-300 ease-out flex flex-col justify-between"
-                          >
-                            <div className="relative w-full h-44 bg-[#f1f3f5] rounded-xl overflow-hidden mb-3.5 flex items-center justify-center">
-                              <Image
-                                src={prod.img}
-                                alt={prod.name}
-                                fill
-                                className="object-contain p-3 group-hover:scale-105 transition-transform duration-300 ease-out"
-                              />
-                              {prod.weights[0] && (
-                                <span className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-xs text-[#092834] border border-gray-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
-                                  {prod.weights[0]}
+                        {/* Right: Dynamic Product Preview Cards */}
+                        <div className="col-span-8 flex flex-col justify-between h-full">
+                          <div>
+                            <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+                              <div>
+                                <span className="text-[#FF5A00] text-xs font-bold uppercase tracking-wider block mb-0.5">
+                                  Category Preview
                                 </span>
-                              )}
+                                <h3 className="text-xl font-extrabold text-[#092834]">
+                                  {activeCategory} Essentials
+                                </h3>
+                              </div>
+
+                              <Link
+                                href={`/products?category=${activeCategory}`}
+                                className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FF5A00] hover:text-[#e04f00] transition-colors duration-200"
+                              >
+                                <span>Explore All {activeCategory}</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </Link>
                             </div>
 
-                            <div>
-                              <h4 className="text-xs sm:text-sm font-bold text-[#092834] group-hover:text-[#FF5A00] transition-colors duration-200 leading-snug">
-                                {prod.name}
-                              </h4>
-                              <span className="text-[11px] text-gray-500 font-medium block mt-1">
-                                Custom Development Available
-                              </span>
+                            {/* Product Preview Cards */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                              {activeProducts.map((prod) => (
+                                <Link
+                                  key={prod.id}
+                                  href={`/products/${prod.id}`}
+                                  className="group bg-[#f8f9fa] hover:bg-white rounded-2xl p-4 border border-gray-200/80 hover:border-[#FF5A00]/40 shadow-xs hover:shadow-lg transition-all duration-300 ease-out flex flex-col justify-between"
+                                >
+                                  <div className="relative w-full h-44 bg-[#f1f3f5] rounded-xl overflow-hidden mb-3.5 flex items-center justify-center">
+                                    <Image
+                                      src={prod.img}
+                                      alt={prod.name}
+                                      fill
+                                      className="object-contain p-3 group-hover:scale-105 transition-transform duration-300 ease-out"
+                                    />
+                                    {prod.weights[0] && (
+                                      <span className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-xs text-[#092834] border border-gray-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
+                                        {prod.weights[0]}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div>
+                                    <h4 className="text-xs sm:text-sm font-bold text-[#092834] group-hover:text-[#FF5A00] transition-colors duration-200 leading-snug">
+                                      {prod.name}
+                                    </h4>
+                                    <span className="text-[11px] text-gray-500 font-medium block mt-1">
+                                      Custom Development Available
+                                    </span>
+                                  </div>
+                                </Link>
+                              ))}
                             </div>
-                          </Link>
-                        ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              );
+            }
 
-          <Link href="/customization" className="hover:text-[#FF5A00] transition-colors duration-200">
-            Customization
-          </Link>
-          <Link href="/how-it-works" className="hover:text-[#FF5A00] transition-colors duration-200">
-            How It Works
-          </Link>
-          <Link href="/quality" className="hover:text-[#FF5A00] transition-colors duration-200">
-            Quality
-          </Link>
-          <Link href="/about" className="hover:text-[#FF5A00] transition-colors duration-200">
-            About
-          </Link>
+            // Baaki saare links ke liye simple Link component
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="hover:text-[#FF5A00] transition-colors duration-200"
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Action Buttons (Cart + Quote) */}
         <div className="flex items-center gap-4">
-          
+
           {/* CART BUTTON WITH BADGE */}
           <Link
             href="/cart"
@@ -231,7 +245,7 @@ export default function Navbar() {
             }`}
             aria-label="View Cart"
           >
-            <ShoppingCart  className="w-5 h-5" />
+            <ShoppingCart className="w-5 h-5" />
 
             {/* Badge Counter */}
             {totalCartCount > 0 && (
@@ -273,42 +287,42 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Panel */}
+      {/* Mobile Menu Panel (Mapped from NAV_LINKS) */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-gray-200 px-6 py-4 space-y-3 shadow-xl max-h-[80vh] overflow-y-auto">
-          <Link href="/" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            Home
-          </Link>
-          <Link href="/about" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            About
-          </Link>
+          {NAV_LINKS.map((link) => {
+            if (link.name === 'Products') {
+              return (
+                <div key={link.href} className="space-y-1">
+                  <Link href={link.href} className="block font-semibold text-[#092834] hover:text-[#FF5A00]">
+                    {link.name}
+                  </Link>
+                  <div className="grid grid-cols-2 gap-2 pl-3 pt-1 pb-2">
+                    {NAV_CATEGORIES.map((category) => (
+                      <Link
+                        key={category}
+                        href={`/products?category=${category}`}
+                        className="text-xs text-gray-600 hover:text-[#FF5A00] py-1 font-medium"
+                      >
+                        {category}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
 
-          <div>
-            <span className="block text-xs uppercase tracking-wider text-[#FF5A00] font-bold pt-2 pb-1">
-              Products
-            </span>
-            <div className="grid grid-cols-2 gap-2 pl-2">
-              {NAV_CATEGORIES.map((category) => (
-                <Link
-                  key={category}
-                  href={`/products?category=${category}`}
-                  className="text-sm text-gray-600 hover:text-[#FF5A00] py-1 font-medium"
-                >
-                  {category}
-                </Link>
-              ))}
-            </div>
-          </div>
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]"
+              >
+                {link.name}
+              </Link>
+            );
+          })}
 
-          <Link href="/customization" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            Customization
-          </Link>
-          <Link href="/how-it-works" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            How It Works
-          </Link>
-          <Link href="/quality" className="block py-1 font-semibold text-[#092834] hover:text-[#FF5A00]">
-            Quality
-          </Link>
           <div className="pt-2">
             <Link
               href="/contact"
