@@ -54,7 +54,7 @@ const HeroSection = () => {
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3.5 mb-14">
             <a
-              href="#pricing"
+              href="/products"
               className="inline-flex items-center gap-2 bg-[#ffffff] text-[#092834] font-bold text-xs tracking-wider uppercase px-5 py-3 rounded hover:bg-[#f3f4f6] transition-all duration-200 shadow-md"
             >
               GET WHOLESALE PRICING
@@ -62,7 +62,7 @@ const HeroSection = () => {
             </a>
 
             <a
-              href="#products"
+              href="/products"
               className="inline-flex items-center gap-2 bg-transparent text-[#ffffff] font-semibold text-xs tracking-wider uppercase px-5 py-3 rounded border border-white/60 hover:border-white hover:bg-white/10 transition-all duration-200"
             >
               VIEW PRODUCTS
