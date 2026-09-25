@@ -1,18 +1,26 @@
 // src/components/Footer.tsx
 import React from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
+  const NAV_LINKS = [
+    { name: "Products", href: "/products" },
+    { name: "Customization", href: "/customization" },
+    { name: "How It Works", href: "/how-it-works" },
+    { name: "Quality", href: "/quality" },
+    { name: "About", href: "/about" },
+  ];
+
   return (
     <footer className="w-full bg-[#081e28] text-white overflow-hidden pt-16 sm:pt-20 pb-8 border-t border-white/5">
       <div className="max-w-7xl 2xl:max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-12">
         
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
+        {/* MAIN GRID (4 Balanced Columns) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 border-b border-white/10">
           
-          {/* 1. BRAND COLUMN (Span 4) */}
-          <div className="lg:col-span-4 space-y-5">
+          {/* 1. BRAND COLUMN (Span 3) */}
+          <div className="lg:col-span-3 space-y-4">
             <Link href="/" className="inline-block group">
               <div className="flex items-center gap-1">
                 <span className="text-2xl sm:text-3xl font-black tracking-tight text-white">
@@ -25,108 +33,28 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="text-slate-300 text-sm leading-relaxed max-w-sm font-normal">
-              Your dedicated apparel production partner. Sourcing high-GSM fabrics, custom cut-and-sew, private labeling, and direct dropship fulfillment.
+            <p className="text-slate-300 text-sm leading-relaxed font-normal">
+              Your dedicated apparel production partner. Sourcing high-GSM fabrics, custom cut-and-sew, and private labeling for enterprise brands.
             </p>
-
-            {/* Social Icons */}
-            <div className="flex items-center gap-2.5 pt-1">
-              {/* Facebook */}
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
-              >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </a>
-
-              {/* X / Twitter */}
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
-              >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-
-              {/* Instagram */}
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
-              >
-                <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                </svg>
-              </a>
-            </div>
           </div>
 
-          {/* 2. EXPLORE (Span 2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <span className="text-[11px] font-black tracking-[0.2em] text-[#FF5A00] uppercase block">
-              EXPLORE
-            </span>
-            <ul className="space-y-3 text-sm font-medium text-slate-300">
-              <li>
-                <Link href="#about" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="#catalog" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Product Catalog
-                </Link>
-              </li>
-              <li>
-                <Link href="#faqs" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  FAQs & MOQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#contact" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Get a Quote
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* 3. PRODUCT CATEGORIES (Span 3) */}
+          {/* 2. NAVIGATION LINKS (Span 3) */}
           <div className="lg:col-span-3 space-y-4">
             <span className="text-[11px] font-black tracking-[0.2em] text-[#FF5A00] uppercase block">
-              GARMENTS
+              QUICK NAVIGATION
             </span>
             <ul className="space-y-3 text-sm font-medium text-slate-300">
-              <li>
-                <Link href="/hoodies" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Heavyweight Hoodies (400+ GSM)
-                </Link>
-              </li>
-              <li>
-                <Link href="/t-shirts" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Oversized Vintage T-Shirts
-                </Link>
-              </li>
-              <li>
-                <Link href="/zipper-hoodies" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Full-Zip Fleeces
-                </Link>
-              </li>
-              <li>
-                <Link href="/bottoms" className="hover:text-white hover:translate-x-0.5 inline-block transition-all">
-                  Sweatpants & Cargo Bottoms
-                </Link>
-              </li>
+              {NAV_LINKS.map((link, idx) => (
+                <li key={idx}>
+                  <Link href={link.href} className="hover:text-white hover:translate-x-1 inline-block transition-all">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* 4. CONTACT DIRECT INFO (Span 3) */}
+          {/* 3. CONTACT DIRECT INFO (Span 3) */}
           <div className="lg:col-span-3 space-y-4">
             <span className="text-[11px] font-black tracking-[0.2em] text-[#FF5A00] uppercase block">
               CONTACT US
@@ -153,18 +81,69 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* 4. SOCIAL HANDLES / CORNER BOX (Span 3) */}
+          <div className="lg:col-span-3 space-y-4">
+            <span className="text-[11px] font-black tracking-[0.2em] text-[#FF5A00] uppercase block">
+              CONNECT WITH US
+            </span>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Follow our daily production floors and latest bulk streetwear drops on social channels.
+            </p>
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-2.5 pt-1">
+              {/* Facebook */}
+              <a
+                href="#"
+                aria-label="Facebook"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10 shadow-md"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+
+              {/* X / Twitter */}
+              <a
+                href="#"
+                aria-label="Twitter"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10 shadow-md"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="#"
+                aria-label="Instagram"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-[#FF5A00] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10 shadow-md"
+              >
+                <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
         </div>
 
-        {/* BOTTOM COPYRIGHT & LEGAL BAR */}
+        {/* BOTTOM COPYRIGHT & RETNAVIA CREDIT BAR */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-medium text-slate-400 gap-4">
           <p>© {new Date().getFullYear()} T SOURCED. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-white transition-colors">
-              Terms of Production
-            </Link>
+          <div className="flex items-center gap-2">
+            <span>Crafted by</span>
+            <a 
+              href="https://retnavia.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-[#FF5A00] font-bold hover:underline tracking-wide"
+            >
+              Retnavia
+            </a>
           </div>
         </div>
 

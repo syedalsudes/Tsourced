@@ -11,13 +11,13 @@ const CATEGORIES = ['All', 'Hoodies', 'T-Shirts', 'Bottoms'];
 export default function CustomCatalogue() {
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const filteredProducts = activeCategory === 'All' 
-    ? PRODUCTS 
+  const filteredProducts = activeCategory === 'All'
+    ? PRODUCTS
     : PRODUCTS.filter(prod => prod.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 font-sans text-navy selection:bg-orange selection:text-white">
-      
+
       {/* Consolidated Curved Hero Section */}
       <header className="relative w-full bg-navy pt-32 pb-40 px-6 md:px-12 shadow-md overflow-hidden">
         {/* Abstract Background Blurs for Premium Feel */}
@@ -28,12 +28,12 @@ export default function CustomCatalogue() {
           <p className="text-orange font-bold tracking-widest uppercase text-sm mb-4 flex items-center gap-2">
             <span className="w-8 h-[2px] bg-orange inline-block"></span> Base Canvas Collection <span className="w-8 h-[2px] bg-orange inline-block"></span>
           </p>
-          
+
           <h1 className="text-4xl md:text-6xl font-extrabold uppercase tracking-tight mb-6 text-white leading-tight">
             Build Your Brand's <br />
             <span className="text-orange">Next Silhouette</span>
           </h1>
-          
+
           <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-10">
             Select a premium blank from our manufacturing catalogue below. Scroll through our categories to find the perfect canvas to build your tech-pack instantly.
           </p>
@@ -59,10 +59,10 @@ export default function CustomCatalogue() {
           </svg>
         </div>
       </header>
-    
+
       {/* Main Catalogue Section */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 relative z-20">
-        
+
         {/* Filters and Controls - overlapping the curve gracefully */}
         <div className="flex flex-col items-center justify-center mb-16 -mt-16 gap-4">
           <div className="flex items-center gap-2 bg-white p-2 rounded-full shadow-xl border border-gray-100 overflow-x-auto max-w-full">
@@ -73,17 +73,16 @@ export default function CustomCatalogue() {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${
-                  activeCategory === category 
-                    ? 'bg-navy text-white shadow-md' 
+                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${activeCategory === category
+                    ? 'bg-navy text-white shadow-md'
                     : 'text-gray-500 hover:text-navy hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 {category}
               </button>
             ))}
           </div>
-          
+
           <div className="text-sm font-bold text-gray-500 bg-white/50 px-4 py-1.5 rounded-full">
             Showing <span className="text-navy">{filteredProducts.length}</span> Products
           </div>
@@ -94,39 +93,39 @@ export default function CustomCatalogue() {
           {filteredProducts.map(prod => (
             <Link href={`/customization/${prod.id}`} key={prod.id} className="group">
               <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-orange/30 transition-all duration-500 flex flex-col h-full transform hover:-translate-y-2">
-                
-                 {/* Image Container with Proper Aspect Ratio & No Crop/Over-Zoom */}
-                               <div className="h-80 w-full bg-[#f8f9fa] relative p-6 flex items-center justify-center">
-                                 {prod.badge && (
-                                   <div className="absolute top-5 left-5 z-20 bg-orange text-white text-[10px] font-extrabold uppercase tracking-widest py-2 px-4 rounded-full shadow-lg">
-                                     {prod.badge}
-                                   </div>
-                                 )}
-                                 
-                                 <div className="relative w-full h-full">
-                                   <Image
-                                     src={prod.img}
-                                     alt={prod.name}
-                                     fill
-                                     className="object-contain transition-transform duration-500 group-hover:scale-105"
-                                   />
-                                 </div>
-                                 
-                                 <div className="absolute inset-0 z-10 bg-navy/0 group-hover:bg-navy/30 transition-colors duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                   <span className="bg-white text-navy font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl flex items-center gap-2">
-                                     View Details <ArrowRight size={18} className="text-orange" />
-                                   </span>
-                                 </div>
-                               </div>
-                
+
+                {/* Image Container with Proper Aspect Ratio & No Crop/Over-Zoom */}
+                <div className="h-80 w-full bg-[#f8f9fa] relative p-6 flex items-center justify-center">
+                  {prod.badge && (
+                    <div className="absolute top-5 left-5 z-20 bg-orange text-white text-[10px] font-extrabold uppercase tracking-widest py-2 px-4 rounded-full shadow-lg">
+                      {prod.badge}
+                    </div>
+                  )}
+
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={prod.img}
+                      alt={prod.name}
+                      fill
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="absolute inset-0 z-10 bg-navy/0 group-hover:bg-navy/30 transition-colors duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <span className="bg-white text-navy font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl flex items-center gap-2">
+                      View Details <ArrowRight size={18} className="text-orange" />
+                    </span>
+                  </div>
+                </div>
+
                 {/* Content Container */}
                 <div className="p-8 flex flex-col flex-grow relative bg-white">
-                  
+
                   <h3 className="text-2xl font-extrabold text-navy mb-3 group-hover:text-orange transition-colors">{prod.name}</h3>
                   <p className="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">{prod.desc}</p>
-                  
+
                   <div className="w-full h-[1px] bg-gray-100 mb-5 group-hover:bg-orange/20 transition-colors"></div>
-                  
+
                   <div className="flex items-center justify-between text-sm font-bold text-navy group-hover:text-orange transition-colors">
                     <span>Select & Customize</span>
                     <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-orange/10 transition-colors">
@@ -141,7 +140,7 @@ export default function CustomCatalogue() {
         </div>
 
       </section>
-      
+
     </div>
   );
 }
