@@ -17,11 +17,10 @@ import {
   Globe2,
   Map,
   Building,
-  CheckCircle2,
-  MessageSquare // Naya icon import kiya gaya hai
+  MessageSquare,
+  Loader2
 } from 'lucide-react';
 
-// Country Data mapping with States and Phone formatting rules
 const COUNTRY_DATA = {
   US: { name: 'United States', code: '+1', phoneLength: 10, format: '(###) ###-####', states: ['California', 'Texas', 'New York', 'Florida', 'Illinois', 'Washington'] },
   CA: { name: 'Canada', code: '+1', phoneLength: 10, format: '(###) ###-####', states: ['Ontario', 'Quebec', 'British Columbia', 'Alberta'] },
@@ -31,7 +30,7 @@ const COUNTRY_DATA = {
 };
 
 export default function CheckoutPage() {
-  const { cart } = useCart();
+  const { cart, clearCart } = useCart();
   const router = useRouter();
   const totalItems = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
@@ -44,28 +43,27 @@ export default function CheckoutPage() {
     province: '',
     city: '',
     phone: '',
-    additionalMessage: '' // Nayi state field add ki hai
+    additionalMessage: ''
   });
 
-  // Redirect to cart if empty
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
   useEffect(() => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && !loading) {
       router.push('/cart');
     }
-  }, [cart, router]);
+  }, [cart, router, loading]);
 
   const currentCountryInfo = COUNTRY_DATA[formData.country as keyof typeof COUNTRY_DATA];
 
-  // Phone number formatter based on country rule
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    let val = e.target.value.replace(/\D/g, '');
     
-    // Limit length
     if (val.length > currentCountryInfo.phoneLength) {
       val = val.slice(0, currentCountryInfo.phoneLength);
     }
 
-    // Apply Format (e.g., (###) ###-####)
     let formatted = val;
     if (currentCountryInfo.format && val.length > 0) {
       let formatStr = currentCountryInfo.format;
@@ -89,16 +87,46 @@ export default function CheckoutPage() {
     setFormData({ 
       ...formData, 
       country: e.target.value, 
-      province: '', // Reset province when country changes
-      phone: ''     // Reset phone to match new format
+      province: '',
+      phone: ''
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Yahan API integration hogi jo Email send karegi admin ko
-    alert('Quote Request Submitted! We will contact you soon.');
-    // clearCart() & redirect to success page
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer: formData,
+          cart: cart,
+          totalItems: totalItems,
+        }),
+      });
+
+      const resData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resData.error || 'Failed to submit quote request');
+      }
+
+      if (clearCart) {
+        clearCart();
+      }
+
+      alert('Quote Request and PDF receipt generated and sent to our team!');
+      router.push('/');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (cart.length === 0) return null;
@@ -121,6 +149,12 @@ export default function CheckoutPage() {
             </p>
           </div>
         </div>
+
+        {errorMsg && (
+          <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-200 text-sm font-semibold">
+            {errorMsg}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
@@ -229,8 +263,6 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  
-                  {/* Country Dropdown */}
                   <div className="sm:col-span-2 space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Country / Region *</label>
                     <div className="relative">
@@ -249,7 +281,6 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Province/State Dropdown */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">State / Province *</label>
                     <div className="relative">
@@ -270,7 +301,6 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* City */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">City *</label>
                     <div className="relative">
@@ -288,7 +318,6 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Smart Phone Input */}
                   <div className="sm:col-span-2 space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Business Phone Number *</label>
                     <div className="flex shadow-sm rounded-xl">
@@ -307,7 +336,6 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {/* Naya Optional Text Area for Additional Messages */}
                   <div className="sm:col-span-2 space-y-1.5 pt-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-1.5">
                       <MessageSquare size={14} className="text-gray-400" />
@@ -322,7 +350,6 @@ export default function CheckoutPage() {
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#FF5A00] focus:ring-1 focus:ring-[#FF5A00] font-medium transition-all resize-none custom-scrollbar"
                     ></textarea>
                   </div>
-
                 </div>
               </div>
 
@@ -330,11 +357,19 @@ export default function CheckoutPage() {
               <div className="pt-8 mt-8 border-t border-gray-200">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-[#FF5A00] hover:bg-[#092834] text-white font-extrabold rounded-xl transition-all duration-300 shadow-xl shadow-[#FF5A00]/20 hover:shadow-2xl hover:shadow-[#092834]/20 hover:-translate-y-1 flex items-center justify-center gap-3 text-lg group"
+                  disabled={loading}
+                  className="w-full py-4 bg-[#FF5A00] hover:bg-[#092834] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-extrabold rounded-xl transition-all duration-300 shadow-xl shadow-[#FF5A00]/20 hover:shadow-2xl hover:shadow-[#092834]/20 hover:-translate-y-1 flex items-center justify-center gap-3 text-lg group"
                 >
-                  Submit Quote Request <Send size={20} className="transform group-hover:translate-x-1 transition-transform" />
+                  {loading ? (
+                    <>
+                      Processing & Generating PDF... <Loader2 size={20} className="animate-spin" />
+                    </>
+                  ) : (
+                    <>
+                      Submit Quote Request <Send size={20} className="transform group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
                 </button>
-                
               </div>
 
             </form>
@@ -343,7 +378,6 @@ export default function CheckoutPage() {
           {/* RIGHT: ORDER SUMMARY (Sticky Sidebar) */}
           <div className="lg:col-span-5 xl:col-span-4">
             <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-xl sticky top-28">
-              
               <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
                 <h3 className="text-xl font-extrabold text-[#092834]">Order Summary</h3>
                 <span className="bg-orange-50 text-[#FF5A00] text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">
@@ -374,7 +408,6 @@ export default function CheckoutPage() {
 
               {/* Metrics Breakdown */}
               <div className="bg-[#092834] rounded-2xl p-5 text-white space-y-4 shadow-inner relative overflow-hidden">
-                {/* Decorative background circle */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
                 
                 <div className="flex justify-between items-center relative z-10">
