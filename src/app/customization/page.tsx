@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
 import { PRODUCTS } from '@/lib/customdata';
 import Image from 'next/image';
+import FabricCards from '@/component/FabricCards';
 
 const CATEGORIES = ['All', 'Hoodies', 'T-Shirts', 'Bottoms'];
 
@@ -138,6 +139,9 @@ export default function CustomCatalogue() {
             </Link>
           ))}
         </div>
+
+        
+        <FabricCards />
 
       </section>
 

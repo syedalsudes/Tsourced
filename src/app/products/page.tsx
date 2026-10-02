@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '@/lib/products';
+import FabricCards from '@/component/FabricCards';
 
 function ProductsContent() {
   const router = useRouter();
@@ -144,6 +145,9 @@ function ProductsContent() {
             </Link>
           ))}
         </div>
+
+        
+        <FabricCards />
 
       </section>
       

@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { 
   Shirt, 
   CheckCircle2, 
   Scale, 
-  ArrowRight, 
-  SlidersHorizontal, 
   Feather, 
   Flame, 
   Layers, 
@@ -16,8 +14,6 @@ import {
 } from 'lucide-react';
 
 export default function FabricCards() {
-  const [activeTab, setActiveTab] = useState(0);
-
   const fabrics = [
     {
       name: "Jersey",
@@ -28,7 +24,7 @@ export default function FabricCards() {
       weight: "140-240 GSM",
       image: "/foldhoodies.png",
       icon: <Wind className="text-orange" size={20} />,
-      badgeBg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+      badgeBg: "bg-cyan-50 text-cyan-700 border-cyan-200"
     },
     {
       name: "French Terry",
@@ -39,7 +35,7 @@ export default function FabricCards() {
       weight: "240-380 GSM",
       image: "/foldhoodies.png",
       icon: <Layers className="text-orange" size={20} />,
-      badgeBg: "bg-orange/10 text-orange border-orange/20"
+      badgeBg: "bg-orange-50 text-orange border-orange/20"
     },
     {
       name: "Fleece",
@@ -50,7 +46,7 @@ export default function FabricCards() {
       weight: "280-450 GSM",
       image: "/foldhoodies.png",
       icon: <Flame className="text-orange" size={20} />,
-      badgeBg: "bg-amber-500/10 text-amber-400 border-amber-500/20"
+      badgeBg: "bg-amber-50 text-amber-700 border-amber-200"
     },
     {
       name: "Interlock",
@@ -61,7 +57,7 @@ export default function FabricCards() {
       weight: "180-300 GSM",
       image: "/foldhoodies.png",
       icon: <ShieldCheck className="text-orange" size={20} />,
-      badgeBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+      badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-200"
     },
     {
       name: "Rib",
@@ -72,16 +68,14 @@ export default function FabricCards() {
       weight: "~180-350 GSM",
       image: "/foldhoodies.png",
       icon: <Feather className="text-orange" size={20} />,
-      badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+      badgeBg: "bg-purple-50 text-purple-700 border-purple-200"
     }
   ];
-
-  const currentFabric = fabrics[activeTab];
 
   return (
     <section className="py-16 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-10">
+      <div className="text-center max-w-3xl mx-auto mb-14">
         <span className="text-orange font-bold tracking-widest uppercase text-xs mb-3 inline-block bg-orange/10 px-4 py-1.5 rounded-full border border-orange/20 shadow-xs">
           Engineered Materials
         </span>
@@ -89,116 +83,103 @@ export default function FabricCards() {
           Choose the Right <span className="text-orange">Fabric</span>
         </h2>
         <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-          Different knit constructions create unique weights, structures, and levels of breathability. Select your fabric standard below.
+          Different knit constructions create unique weights, structures, and levels of breathability. Explore our fabric standards below.
         </p>
       </div>
 
-      {/* Styled Filter / Tab Bar */}
-      <div className="flex flex-col items-center justify-center mb-12 gap-4">
-        <div className="flex items-center gap-2 bg-white p-2 rounded-full shadow-xl border border-gray-100 overflow-x-auto max-w-full">
-          <div className="pl-4 pr-2 text-orange hidden md:flex items-center gap-1 font-bold text-xs uppercase tracking-wider">
-            <SlidersHorizontal size={18} /> Fabric:
-          </div>
-          {fabrics.map((fabric, idx) => (
-            <button
-              key={fabric.name}
-              onClick={() => setActiveTab(idx)}
-              className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap flex items-center gap-2 ${
-                activeTab === idx
-                  ? 'bg-navy text-white shadow-md scale-105'
-                  : 'text-gray-500 hover:text-navy hover:bg-gray-50'
-              }`}
-            >
-              <span className={`w-2 h-2 rounded-full ${activeTab === idx ? 'bg-orange animate-pulse' : 'bg-gray-300'}`}></span>
-              {fabric.name}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Grid Layout Cards - Neutral / Light Theme */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {fabrics.map((fabric) => (
+          <div 
+            key={fabric.name} 
+            className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-200/90 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:border-gray-300"
+          >
+            {/* Card Image Header */}
+            <div className="relative h-48 w-full overflow-hidden bg-gray-100 shrink-0">
+              <Image 
+                src={fabric.image} 
+                alt={fabric.name} 
+                fill 
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+              
+              {/* Floating Weight Badge */}
+              <div className="absolute top-4 left-4 z-10 bg-white/95 text-gray-100 text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm uppercase tracking-wider flex items-center gap-1.5 border border-gray-200">
+                <Scale size={13} className="text-orange" /> {fabric.weight}
+              </div>
 
-      {/* Main Interactive Showcase Card with Perfectly Balanced Alignment */}
-      <div className="relative bg-[#0A1128] rounded-3xl overflow-hidden shadow-2xl border border-white/10 grid grid-cols-1 lg:grid-cols-12 min-h-[520px]">
-        
-        {/* Left Side: Background Image Covering Entire Panel with Rich Gradient */}
-        <div className="lg:col-span-5 relative min-h-[320px] lg:min-h-full overflow-hidden bg-gray-900">
-          <Image 
-            src={currentFabric.image} 
-            alt={currentFabric.name} 
-            fill 
-            className="object-cover brightness-[0.85] hover:scale-105 transition-transform duration-700"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1128] via-transparent to-transparent lg:hidden"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0A1128]/90 hidden lg:block"></div>
-          
-          {/* Floating GSM Badge */}
-          <div className="absolute top-6 left-6 z-10 bg-orange text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-lg uppercase tracking-wider flex items-center gap-2 border border-white/20">
-            <Scale size={14} /> {currentFabric.weight}
-          </div>
-        </div>
-
-        {/* Right Side: Content & Specifications */}
-        <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-between text-white relative z-10 bg-[#0A1128]">
-          <div className="space-y-6">
-            
-            {/* Title & Category Badge */}
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-orange/10 flex items-center justify-center border border-orange/20 shadow-inner">
-                    {currentFabric.icon}
-                  </div>
-                  <h3 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
-                    {currentFabric.name}
-                  </h3>
-                </div>
-                <span className={`text-xs font-extrabold tracking-wider uppercase px-4 py-1.5 rounded-full border shadow-sm ${currentFabric.badgeBg}`}>
-                  {currentFabric.tagline.split(' • ')[0]}
+              {/* Tagline / Category Chip */}
+              <div className="absolute top-4 right-4 z-10">
+                <span className={`text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border shadow-xs ${fabric.badgeBg}`}>
+                  {fabric.tagline.split(' • ')[0]}
                 </span>
               </div>
-              <p className="text-xs font-bold text-orange tracking-widest uppercase pl-1">
-                {currentFabric.tagline}
-              </p>
             </div>
 
-            {/* Description */}
-            <p className="text-gray-300 text-sm sm:text-base leading-relaxed pl-1">
-              {currentFabric.desc}
-            </p>
+            {/* Card Body */}
+            <div className="p-6 flex flex-col flex-grow justify-between space-y-6">
+              
+              <div className="space-y-4">
+                {/* Title & Icon */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-orange/10 flex items-center justify-center border border-orange/20 shrink-0">
+                    {fabric.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-900 leading-tight">
+                      {fabric.name}
+                    </h3>
+                    <p className="text-[11px] font-bold text-orange tracking-wider uppercase">
+                      {fabric.tagline}
+                    </p>
+                  </div>
+                </div>
 
-            {/* Best For Tags Grid */}
-            <div className="bg-white/5 rounded-2xl p-5 border border-white/10 backdrop-blur-md">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-orange mb-3 flex items-center gap-2">
-                <Shirt size={15} /> Ideal Applications (Best For):
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {currentFabric.bestFor.map((item, iIdx) => (
-                  <span key={iIdx} className="text-xs font-semibold text-white bg-black/40 px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs flex items-center gap-1.5">
-                    <CheckCircle2 size={13} className="text-orange shrink-0" />
-                    {item}
-                  </span>
-                ))}
+                {/* Description */}
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                  {fabric.desc}
+                </p>
+
+                {/* Ideal Applications (Best For) */}
+                <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-100">
+                  <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-700 mb-2.5 flex items-center gap-1.5">
+                    <Shirt size={14} className="text-orange" /> Ideal Applications:
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {fabric.bestFor.map((item, iIdx) => (
+                      <span 
+                        key={iIdx} 
+                        className="text-[11px] font-medium text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-gray-200 shadow-xs flex items-center gap-1"
+                      >
+                        <CheckCircle2 size={12} className="text-orange shrink-0" />
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Choose When Box */}
+                <div className="border-l-2 border-orange pl-3 py-1 bg-orange/5 rounded-r-lg">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">
+                    When to select:
+                  </p>
+                  <p className="text-xs font-medium text-slate-700 italic leading-relaxed">
+                    &ldquo;{fabric.chooseWhen}&rdquo;
+                  </p>
+                </div>
               </div>
+
+              {/* Card Footer */}
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                <span className="flex items-center gap-1.5 text-slate-600">
+                  <ShieldCheck size={14} className="text-orange" /> B2B Verified Standard
+                </span>
+              </div>
+
             </div>
-
-            {/* Choose When Box */}
-            <div className="border-l-4 border-orange pl-4 py-1 bg-white/[0.02] rounded-r-xl">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">When to select {currentFabric.name}:</p>
-              <p className="text-xs sm:text-sm font-medium text-gray-200 italic leading-relaxed">
-                &ldquo;{currentFabric.chooseWhen}&rdquo;
-              </p>
-            </div>
-
           </div>
-
-          {/* Bottom Action Footer inside card */}
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 font-medium">
-            <span className="flex items-center gap-1.5 text-gray-300">
-              <ShieldCheck size={15} className="text-orange" /> Verified B2B Textile Standard
-            </span>
-          </div>
-
-        </div>
-
+        ))}
       </div>
     </section>
   );
