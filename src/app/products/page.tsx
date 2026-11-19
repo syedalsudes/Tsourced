@@ -1,18 +1,20 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck } from 'lucide-react';
+import { ArrowRight, SlidersHorizontal, Package, Zap, ShieldCheck, X, Layers } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '@/lib/products';
 import FabricCards from '@/component/FabricCards';
 
 function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const activeCategory = searchParams.get('category') || 'All';
+  const activeFabric = searchParams.get('fabric') || 'All';
 
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -26,9 +28,31 @@ function ProductsContent() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  const filteredProducts = activeCategory === 'All' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(prod => prod.category === activeCategory);
+  // Jab neeche FabricCard par click ho
+  const handleFabricSelect = (fabricName: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('category'); // Category reset taake us fabric ke saare garments dikhein
+    params.set('fabric', fabricName);
+
+    router.push(`?${params.toString()}`, { scroll: false });
+
+    // Smoothly product grid par scroll karein
+    if (gridRef.current) {
+      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const clearFabricFilter = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('fabric');
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  const filteredProducts = PRODUCTS.filter(prod => {
+    const matchesCategory = activeCategory === 'All' || prod.category === activeCategory;
+    const matchesFabric = activeFabric === 'All' || prod.fabricFamily === activeFabric;
+    return matchesCategory && matchesFabric;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 font-sans text-navy selection:bg-orange selection:text-white">
@@ -74,9 +98,9 @@ function ProductsContent() {
       </header>
     
       {/* Main Section */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 relative z-20">
+      <section ref={gridRef} className="max-w-7xl mx-auto px-6 md:px-12 relative z-20 scroll-mt-24">
         
-        <div className="flex flex-col items-center justify-center mb-16 -mt-16 gap-4">
+        <div className="flex flex-col items-center justify-center mb-12 -mt-16 gap-4">
           <div className="flex items-center gap-2 bg-white p-2 rounded-full shadow-xl border border-gray-100 overflow-x-auto max-w-full">
             <div className="pl-4 pr-2 text-orange hidden md:block">
               <SlidersHorizontal size={20} />
@@ -97,6 +121,29 @@ function ProductsContent() {
           </div>
         </div>
 
+        {/* Active Fabric Filter Indicator */}
+        {activeFabric !== 'All' && (
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-white border-2 border-orange/30 px-6 py-4 rounded-2xl shadow-sm mb-10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-orange/10 flex items-center justify-center text-orange">
+                <Layers size={18} />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Filtered by Fabric Family</p>
+                <p className="text-base font-extrabold text-navy">
+                  {activeFabric} <span className="text-gray-400 font-medium text-sm">({filteredProducts.length} {filteredProducts.length === 1 ? 'garment' : 'garments'})</span>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={clearFabricFilter}
+              className="inline-flex items-center gap-1.5 bg-navy hover:bg-orange text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-full transition-colors cursor-pointer"
+            >
+              Show All Fabrics <X size={14} />
+            </button>
+          </div>
+        )}
+
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map(prod => (
@@ -110,6 +157,11 @@ function ProductsContent() {
                       {prod.badge}
                     </div>
                   )}
+
+                  {/* Fabric Family Pill */}
+                  <div className="absolute top-5 right-5 z-20 bg-white/90 backdrop-blur-xs text-navy border border-gray-200 text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 rounded-full shadow-xs">
+                    {prod.fabricFamily}
+                  </div>
                   
                   <div className="relative w-full h-full">
                     <Image
@@ -146,8 +198,8 @@ function ProductsContent() {
           ))}
         </div>
 
-        
-        <FabricCards />
+        {/* Clickable Fabric Cards */}
+        <FabricCards activeFabric={activeFabric} onSelectFabric={handleFabricSelect} />
 
       </section>
       
